@@ -1,0 +1,3 @@
+storePassword=food123456
+keyPassword=food123456
+keyAlias=key

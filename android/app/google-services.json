@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "985621394202",
+    "firebase_url": "https://towapp-a0877.firebaseio.com",
+    "project_id": "towapp-a0877",
+    "storage_bucket": "towapp-a0877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985621394202:android:a1ec18c5195c78979ef2a3",
+        "android_client_info": {
+          "package_name": "com.halalguide.fooddelivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985621394202-b95s0ua0e9n8h4kl3p3g1qo2kfd2tquq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhz9SaBrkd92xHumon-VWwSsrNZmJ71Ow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985621394202-b95s0ua0e9n8h4kl3p3g1qo2kfd2tquq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "985621394202-i77r69rfscruuqr4b3ka7u1m66mkjnrc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tow.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985621394202:android:fb1796d7fb4dc1d99ef2a3",
+        "android_client_info": {
+          "package_name": "com.towapp.towapptaplor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985621394202-b95s0ua0e9n8h4kl3p3g1qo2kfd2tquq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhz9SaBrkd92xHumon-VWwSsrNZmJ71Ow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985621394202-b95s0ua0e9n8h4kl3p3g1qo2kfd2tquq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "985621394202-i77r69rfscruuqr4b3ka7u1m66mkjnrc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tow.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
