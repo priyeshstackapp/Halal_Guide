@@ -78,7 +78,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                           keyboardType: TextInputType.text,
                           decoration: getInputDecoration(hintText: S.of(context).your_biography, labelText: S.of(context).about),
                           initialValue: widget.user.bio,
-                          validator: (input) => input.trim().length < 3 ? S.of(context).not_a_valid_biography : null,
+                          // validator: (input) => input.trim().length < 3 ? S.of(context).not_a_valid_biography : null,
                           onSaved: (input) => widget.user.bio = input,
                         ),
                       ],

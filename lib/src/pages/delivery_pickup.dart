@@ -117,7 +117,8 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                           ),
                   ),
                 ),
-                _con.carts.isNotEmpty && Helper.canDelivery(_con.carts[0].food.restaurant, carts: _con.carts)
+                _con.carts.isNotEmpty
+                    // && Helper.canDelivery(_con.carts[0].food.restaurant, carts: _con.carts)
                     ? DeliveryAddressesItemWidget(
                         paymentMethod: _con.getDeliveryMethod(),
                         address: _con.deliveryAddress,

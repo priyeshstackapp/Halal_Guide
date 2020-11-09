@@ -73,8 +73,8 @@ Future<Stream<Restaurant>> getPopularRestaurants(Address myLocation) async {
 Future<Stream<Restaurant>> searchRestaurants(String search, Address address) async {
   Uri uri = Helper.getUri('api/restaurants');
   Map<String, dynamic> _queryParams = {};
-  _queryParams['search'] = 'name:$search;description:$search';
-  _queryParams['searchFields'] = 'name:like;description:like';
+  _queryParams['search'] = 'name:$search;description:$search;address:$search';
+  _queryParams['searchFields'] = 'name:like;description:like;address:like';
   _queryParams['limit'] = '5';
   if (!address.isUnknown()) {
     _queryParams['myLon'] = address.longitude.toString();
