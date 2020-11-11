@@ -57,9 +57,10 @@ Future<dynamic> setCurrentLocation() async {
   Address _address = new Address();
   location.requestService().then((value) async {
     location.getLocation().then((_locationData) async {
-      String _addressName = await mapsUtil.getAddressName(new LatLng(_locationData?.latitude, _locationData?.longitude), setting.value.googleMapsKey);
-      _address = Address.fromJSON({'address': _addressName, 'latitude': _locationData?.latitude, 'longitude': _locationData?.longitude});
+      // String _addressName = await mapsUtil.getAddressName(new LatLng(_locationData.latitude, _locationData.longitude), setting.value.googleMapsKey);
+      _address = Address.fromJSON({'latitude': _locationData?.latitude, 'longitude': _locationData?.longitude});
       await changeCurrentLocation(_address);
+      deliveryAddress.value = _address;
       whenDone.complete(_address);
     }).timeout(Duration(seconds: 10), onTimeout: () async {
       await changeCurrentLocation(_address);

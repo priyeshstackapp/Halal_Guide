@@ -71,7 +71,8 @@ class CardWidget extends StatelessWidget {
                             style: Theme.of(context).textTheme.caption.merge(TextStyle(color: Theme.of(context).primaryColor)),
                           ),
                   ),
-                  Container(
+                  !restaurant.closed
+                      ? Container(
                     margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                     decoration: BoxDecoration(color: Helper.canDelivery(restaurant) ? Colors.green : Colors.orange, borderRadius: BorderRadius.circular(24)),
@@ -84,7 +85,7 @@ class CardWidget extends StatelessWidget {
                             S.of(context).pickup,
                             style: Theme.of(context).textTheme.caption.merge(TextStyle(color: Theme.of(context).primaryColor)),
                           ),
-                  ),
+                  ) : Container(),
                 ],
               ),
             ],

@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     settingRepo.initSettings();
+    settingRepo.setCurrentLocation();
     super.initState();
   }
 
@@ -37,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     return ValueListenableBuilder(
         valueListenable: settingRepo.setting,
         builder: (context, Setting _setting, _) {
-          print(CustomTrace(StackTrace.current, message: _setting.toMap().toString()));
+          // print(CustomTrace(StackTrace.current, message: _setting.toMap().toString()));
           return MaterialApp(
               navigatorKey: settingRepo.navigatorKey,
               title: _setting.appName,

@@ -10,6 +10,7 @@ import '../elements/CardsCarouselWidget.dart';
 import '../elements/CircularLoadingWidget.dart';
 import '../models/restaurant.dart';
 import '../models/route_argument.dart';
+import '../repository/settings_repository.dart' as sett;
 
 class MapWidget extends StatefulWidget {
   final RouteArgument routeArgument;
@@ -39,7 +40,7 @@ class _MapWidgetState extends StateMVC<MapWidget> {
       _con.getCurrentLocation();
     } else {
       print("Getting near Res");
-      _con.listenForNearRestaurants(Address(), Address());
+      _con.listenForNearRestaurants(sett.deliveryAddress.value, sett.deliveryAddress.value);
     }
     super.initState();
   }
