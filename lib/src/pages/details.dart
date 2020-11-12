@@ -46,7 +46,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _con.scaffoldKey,
-        floatingActionButton: FloatingActionButton.extended(
+        floatingActionButton: _con.foods.isNotEmpty ? FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context).pushNamed('/Menu', arguments: new RouteArgument(id: widget.routeArgument.id));
           },
@@ -60,7 +60,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
             S.of(context).menu,
             style: TextStyle(color: Theme.of(context).primaryColor),
           ),
-        ),
+        ) : Container(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: RefreshIndicator(
           onRefresh: _con.refreshRestaurant,
@@ -236,7 +236,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                   children: <Widget>[
                                     Expanded(
                                       child: Text(
-                                        '${_con.restaurant.phone} \n${_con.restaurant.mobile}',
+                                        '${_con.restaurant.phone ?? ""} \n${_con.restaurant.mobile ?? ""}',
                                         overflow: TextOverflow.ellipsis,
                                         style: Theme.of(context).textTheme.bodyText1,
                                       ),
