@@ -52,7 +52,7 @@ class MapsUtil {
   Future<String> getAddressName(LatLng location, String apiKey) async {
     try {
       var endPoint =
-          'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&language=${setting.value.mobileLanguage.value}&key=AIzaSyBEnfBtVUGwIF8v69_mU7huVoqnGff5DP8';
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&language=${setting.value.mobileLanguage.value}&key=AIzaSyBhCuaXAhMxIGmGegxxG_2oRT8yO6imUNI';
       var response = jsonDecode((await http.get(endPoint, headers: await LocationUtils.getAppHeaders())).body);
 
       return response['results'][0]['formatted_address'];
