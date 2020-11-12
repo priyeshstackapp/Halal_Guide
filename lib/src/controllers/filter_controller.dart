@@ -63,7 +63,7 @@ class FilterController extends ControllerMVC {
 
   Future<void> refreshCuisines() async {
     cuisines.clear();
-    listenForCuisines(message: S.of(context).addresses_refreshed_successfuly);
+    // listenForCuisines(message: S.of(context).addresses_refreshed_successfuly);
   }
 
   void clearFilter() {
@@ -79,20 +79,20 @@ class FilterController extends ControllerMVC {
     cuisines.forEach((Cuisine _f) {
       _f.selected = false;
     });
-    cuisines.elementAt(0).selected = true;
+    // cuisines.elementAt(0).selected = true;
   }
 
   void onChangeCuisinesFilter(int index) {
-    if (index == 0) {
-      // all
-      setState(() {
-        resetCuisines();
-      });
-    } else {
+    // if (index == 0) {
+    //   // all
+    //   setState(() {
+    //     resetCuisines();
+    //   });
+    // } else {
       setState(() {
         cuisines.elementAt(index).selected = !cuisines.elementAt(index).selected;
-        cuisines.elementAt(0).selected = false;
+        // cuisines.elementAt(0).selected = false;
       });
-    }
+    // }
   }
 }

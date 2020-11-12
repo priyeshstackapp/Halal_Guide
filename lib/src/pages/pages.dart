@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../elements/DrawerWidget.dart';
 import '../elements/FilterWidget.dart';
@@ -97,8 +100,13 @@ class _PagesWidgetState extends State<PagesWidget> {
           selectedIconTheme: IconThemeData(size: 28),
           unselectedItemColor: Theme.of(context).focusColor.withOpacity(1),
           currentIndex: widget.currentTab,
-          onTap: (int i) {
+          onTap: (int i) async {
             if(i!=1){
+              if(i==2){
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setString('filter', json.encode({}));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PagesWidget(currentTab: i,)),);
+              }
               this._selectTab(i);
             }else{
               widget.isSingle = false;
