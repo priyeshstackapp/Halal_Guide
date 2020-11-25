@@ -1,11 +1,11 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\flutter sdk\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\StackApp Flutter\Documents\Vehicle
-FLUTTER_TARGET=lib\main.dart
+FLUTTER_ROOT=/Users/apple/Desktop/flutter
+FLUTTER_APPLICATION_PATH=/Users/apple/Desktop/priyesh_work/Halal_Guide
+FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
-SYMROOT=${SOURCE_ROOT}/../build\ios
+SYMROOT=${SOURCE_ROOT}/../build/ios
 OTHER_LDFLAGS=$(inherited) -framework Flutter
-FLUTTER_FRAMEWORK_DIR=C:\flutter sdk\flutter\bin\cache\artifacts\engine\ios
+FLUTTER_FRAMEWORK_DIR=/Users/apple/Desktop/flutter/bin/cache/artifacts/engine/ios
 FLUTTER_BUILD_NAME=2.4.1
 FLUTTER_BUILD_NUMBER=2.4.1
 DART_OBFUSCATION=false

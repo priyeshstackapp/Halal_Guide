@@ -1,8 +1,8 @@
 {
   "name": "wakelock",
   "version": "0.0.1",
-  "summary": "A new Flutter plugin.",
-  "description": "A new Flutter plugin.",
+  "summary": "Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on Android, iOS, and web.",
+  "description": "Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on Android, iOS, and web.",
   "homepage": "http://example.com",
   "license": {
     "file": "../LICENSE"
@@ -14,6 +14,7 @@
     "path": "."
   },
   "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
   "dependencies": {
     "Flutter": [
 
@@ -24,6 +25,6 @@
   },
   "pod_target_xcconfig": {
     "DEFINES_MODULE": "YES",
-    "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64"
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
   }
 }

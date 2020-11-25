@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "messages.h"
 #import "WakelockPlugin.h"
 
 FOUNDATION_EXPORT double wakelockVersionNumber;
