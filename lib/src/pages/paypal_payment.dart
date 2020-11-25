@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
+// import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../generated/l10n.dart';
 import '../controllers/paypal_controller.dart';
@@ -20,6 +24,16 @@ class _PayPalPaymentWidgetState extends StateMVC<PayPalPaymentWidget> {
   _PayPalPaymentWidgetState() : super(PayPalController()) {
     _con = controller;
   }
+
+  final Completer<WebViewController> _controller =
+  Completer<WebViewController>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,36 +49,42 @@ class _PayPalPaymentWidgetState extends StateMVC<PayPalPaymentWidget> {
       ),
       body: Stack(
         children: <Widget>[
-          InAppWebView(
+          // InAppWebView(
+          //   initialUrl: _con.url,
+          //   initialHeaders: {},
+          //   initialOptions: new InAppWebViewWidgetOptions(),
+          //   onWebViewCreated: (InAppWebViewController controller) {
+          //     _con.webView = controller;
+          //   },
+          //   onLoadStart: (InAppWebViewController controller, String url) {
+          //     setState(() {
+          //       _con.url = url;
+          //     });
+          //     if (url == "${GlobalConfiguration().getString('base_url')}payments/paypal") {
+          //       Navigator.of(context).pushReplacementNamed('/Pages', arguments: 3);
+          //     }
+          //   },
+          //   onProgressChanged: (InAppWebViewController controller, int progress) {
+          //     setState(() {
+          //       _con.progress = progress / 100;
+          //     });
+          //   },
+          // ),
+          WebView(
             initialUrl: _con.url,
-            initialHeaders: {},
-            initialOptions: new InAppWebViewWidgetOptions(),
-            onWebViewCreated: (InAppWebViewController controller) {
-              _con.webView = controller;
-            },
-            onLoadStart: (InAppWebViewController controller, String url) {
-              setState(() {
-                _con.url = url;
-              });
-              if (url == "${GlobalConfiguration().getString('base_url')}payments/paypal") {
-                Navigator.of(context).pushReplacementNamed('/Pages', arguments: 3);
-              }
-            },
-            onProgressChanged: (InAppWebViewController controller, int progress) {
-              setState(() {
-                _con.progress = progress / 100;
-              });
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
             },
           ),
-          _con.progress < 1
-              ? SizedBox(
-                  height: 3,
-                  child: LinearProgressIndicator(
-                    value: _con.progress,
-                    backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
-                  ),
-                )
-              : SizedBox(),
+          // _con.progress < 1
+          //     ? SizedBox(
+          //         height: 3,
+          //         child: LinearProgressIndicator(
+          //           value: _con.progress,
+          //           backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
+          //         ),
+          //       )
+          //     : SizedBox(),
         ],
       ),
     );
