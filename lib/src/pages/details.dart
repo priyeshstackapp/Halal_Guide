@@ -46,7 +46,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _con.scaffoldKey,
-        floatingActionButton: _con.foods.isNotEmpty ? FloatingActionButton.extended(
+        floatingActionButton: _con.featuredFoods.isNotEmpty ? FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context).pushNamed('/Menu', arguments: new RouteArgument(id: widget.routeArgument.id));
           },
