@@ -45,14 +45,14 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _con.scaffoldKey,
-      drawer: DrawerWidget(),
+      // drawer: DrawerWidget(),
       endDrawer: FilterWidget(onFilter: (filter) {
         Navigator.of(context).pushReplacementNamed('/Category', arguments: RouteArgument(id: widget.routeArgument.id));
       }),
       appBar: AppBar(
         leading: new IconButton(
-          icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
-          onPressed: () => _con.scaffoldKey?.currentState?.openDrawer(),
+          icon: new Icon(Icons.arrow_back, color: Theme.of(context).hintColor),
+          onPressed: () => Navigator.pop(context),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
