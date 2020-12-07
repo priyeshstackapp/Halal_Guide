@@ -22,12 +22,12 @@ class HomeWidget extends StatefulWidget {
   @override
   _HomeWidgetState createState() => _HomeWidgetState();
 }
-
+HomeController homeCon;
 class _HomeWidgetState extends StateMVC<HomeWidget> {
-  HomeController _con;
+  // HomeController _con;
 
   _HomeWidgetState() : super(HomeController()) {
-    _con = controller;
+    homeCon = controller;
   }
 
   @override
@@ -60,7 +60,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _con.refreshHome,
+        onRefresh: homeCon.refreshHome,
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           child: Column(
@@ -76,7 +76,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   },
                 ),
               ),
-              _con.topRestaurants.isEmpty ? Container(): Padding(
+              homeCon.topRestaurants.isEmpty ? Container(): Padding(
                 padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
                 child: ListTile(
                   dense: true,
@@ -88,7 +88,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   trailing: IconButton(
                     onPressed: () {
                       if (currentUser.value.apiToken == null) {
-                        _con.requestForCurrentLocation(context);
+                        homeCon.requestForCurrentLocation(context);
                       } else {
                         var bottomSheetController = widget.parentScaffoldKey.currentState.showBottomSheet(
                           (context) => DeliveryAddressBottomSheetWidget(scaffoldKey: widget.parentScaffoldKey),
@@ -97,7 +97,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                           ),
                         );
                         bottomSheetController.closed.then((value) {
-                          _con.refreshHome();
+                          homeCon.refreshHome();
                         });
                       }
                     },
@@ -116,8 +116,8 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   ),
                 ),
               ),
-              _con.topRestaurants.isEmpty ? Container(): CardsCarouselWidget(restaurantsList: _con.topRestaurants, heroTag: 'home_top_restaurants'),
-              _con.trendingFoods.isEmpty ? Container(): ListTile(
+              homeCon.topRestaurants.isEmpty ? Container(): CardsCarouselWidget(restaurantsList: homeCon.topRestaurants, heroTag: 'home_top_restaurants'),
+              homeCon.trendingFoods.isEmpty ? Container(): ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
                 leading: Icon(
@@ -134,8 +134,8 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   style: Theme.of(context).textTheme.caption,
                 ),
               ),
-              _con.trendingFoods.isEmpty ? Container():FoodsCarouselWidget(foodsList: _con.trendingFoods, heroTag: 'home_food_carousel'),
-              _con.categories.isEmpty ? Container():Padding(
+              homeCon.trendingFoods.isEmpty ? Container():FoodsCarouselWidget(foodsList: homeCon.trendingFoods, heroTag: 'home_food_carousel'),
+              homeCon.categories.isEmpty ? Container():Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ListTile(
                   dense: true,
@@ -150,10 +150,10 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   ),
                 ),
               ),
-              _con.categories.isEmpty ? Container(): CategoriesCarouselWidget(
-                categories: _con.categories,
+              homeCon.categories.isEmpty ? Container(): CategoriesCarouselWidget(
+                categories: homeCon.categories,
               ),
-              _con.popularRestaurants.isEmpty ? Container():Padding(
+              homeCon.popularRestaurants.isEmpty ? Container():Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                 child: ListTile(
                   dense: true,
@@ -168,14 +168,14 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   ),
                 ),
               ),
-              _con.popularRestaurants.isEmpty ? Container():Padding(
+              homeCon.popularRestaurants.isEmpty ? Container():Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: GridWidget(
-                  restaurantsList: _con.popularRestaurants,
+                  restaurantsList: homeCon.popularRestaurants,
                   heroTag: 'home_restaurants',
                 ),
               ),
-              _con.recentReviews.isEmpty ? Container():Padding(
+              homeCon.recentReviews.isEmpty ? Container():Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ListTile(
                   dense: true,
@@ -190,9 +190,9 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   ),
                 ),
               ),
-              _con.recentReviews.isEmpty ? Container():Padding(
+              homeCon.recentReviews.isEmpty ? Container():Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ReviewsListWidget(reviewsList: _con.recentReviews),
+                child: ReviewsListWidget(reviewsList: homeCon.recentReviews),
               ),
             ],
           ),

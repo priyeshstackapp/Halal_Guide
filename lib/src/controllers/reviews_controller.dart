@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/models/restaurant.dart';
+import 'package:food_delivery_app/src/repository/restaurant_repository.dart';
+import 'package:food_delivery_app/src/repository/settings_repository.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -44,6 +47,45 @@ class ReviewsController extends ControllerMVC {
       }
     });
   }
+
+  Restaurant restaurant;
+
+  void listenForRestaurant({String id, String message}) async {
+    final Stream<Restaurant> stream = await getRestaurant(id, deliveryAddress.value);
+    stream.listen((Restaurant _restaurant) {
+      setState(() => restaurant = _restaurant);
+    }, onError: (a) {
+      print(a);
+      scaffoldKey?.currentState?.showSnackBar(SnackBar(
+        content: Text(S.of(context).verify_your_internet_connection),
+      ));
+    }, onDone: () {
+      if (message != null) {
+        scaffoldKey?.currentState?.showSnackBar(SnackBar(
+          content: Text(message),
+        ));
+      }
+    });
+  }
+
+  List<Review> reviews = <Review>[];
+
+  void listenForRestaurantReviews({String id, String message}) async {
+    final Stream<Review> stream = await getRestaurantReviews(id);
+    stream.listen((Review _review) {
+      setState(() => reviews.add(_review));
+    }, onError: (a) {}, onDone: () {});
+  }
+
+  void addOnlyRestaurantReview(Review _review) async {
+    restaurantRepo.addRestaurantReview(_review, this.restaurant).then((value) {
+      Navigator.pop(context,"Yes");
+      scaffoldKey?.currentState?.showSnackBar(SnackBar(
+        content: Text(S.of(context).the_restaurant_has_been_rated_successfully),
+      ));
+    });
+  }
+
 
   void addFoodReview(Review _review, Food _food) async {
     foodRepo.addFoodReview(_review, _food).then((value) {

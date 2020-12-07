@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/repository/user_repository.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -22,6 +23,8 @@ class RestaurantController extends ControllerMVC {
   List<Food> featuredFoods = <Food>[];
   List<Review> reviews = <Review>[];
   GlobalKey<ScaffoldState> scaffoldKey;
+  bool isReview = false;
+  bool isReviewEdit = false;
 
   RestaurantController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -56,8 +59,22 @@ class RestaurantController extends ControllerMVC {
     final Stream<Review> stream = await getRestaurantReviews(id);
     stream.listen((Review _review) {
       setState(() => reviews.add(_review));
-    }, onError: (a) {}, onDone: () {});
+    }, onError: (a) {}, onDone: () {
+      if(currentUser.value.id!=null) {
+        reviews.forEach((element) {
+          if (element.user.id == currentUser.value.id) {
+            isReview = true;
+            isReviewEdit = true;
+            setState(() {});
+          }
+        });
+      }else{
+        isReview = true;
+        setState(() {});
+      }
+    });
   }
+
 
   void listenForFoods(String idRestaurant, {List<String> categoriesId}) async {
     final Stream<Food> stream = await getFoodsOfRestaurant(idRestaurant, categories: categoriesId);
@@ -110,6 +127,8 @@ class RestaurantController extends ControllerMVC {
     galleries.clear();
     reviews.clear();
     featuredFoods.clear();
+    isReview = false;
+    isReviewEdit = false;
     listenForRestaurant(id: _id, message: S.of(context).restaurant_refreshed_successfuly);
     listenForRestaurantReviews(id: _id);
     listenForGalleries(_id);

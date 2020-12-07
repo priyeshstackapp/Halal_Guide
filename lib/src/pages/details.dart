@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:food_delivery_app/src/pages/reviewList.dart';
+import 'package:food_delivery_app/src/pages/review_restaurent.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -113,25 +115,61 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                         style: Theme.of(context).textTheme.headline3,
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 32,
-                                      child: Chip(
-                                        padding: EdgeInsets.all(0),
-                                        label: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(_con.restaurant.rate,
-                                                style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Theme.of(context).primaryColor))),
-                                            Icon(
-                                              Icons.star_border,
-                                              color: Theme.of(context).primaryColor,
-                                              size: 16,
-                                            ),
-                                          ],
+                                    Row(
+                                      children: [
+                                        _con.isReview ? _con.isReviewEdit ? IconButton(
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () async {
+                                            await Navigator.of(context).push(
+                                                MaterialPageRoute(builder: (context) =>
+                                                    ReviewsRestaurantWidget(routeArgument:
+                                                    RouteArgument(id: _con.restaurant.id,
+                                                        heroTag: "restaurant_reviews"),),));
+
+                                            _con.refreshRestaurant();
+                                          },
+                                        ):  Container() : IconButton(
+                                          icon: Icon(Icons.add),
+                                          onPressed: () async {
+                                            await Navigator.of(context).push(
+                                                MaterialPageRoute(builder: (context) =>
+                                                    ReviewsRestaurantWidget(routeArgument:
+                                                    RouteArgument(id: _con.restaurant.id,
+                                                        heroTag: "restaurant_reviews"),),));
+
+                                            _con.refreshRestaurant();
+                                          },
                                         ),
-                                        backgroundColor: Theme.of(context).accentColor.withOpacity(0.9),
-                                        shape: StadiumBorder(),
-                                      ),
+                                        SizedBox(
+                                          height: 32,
+                                          child: Chip(
+                                            padding: EdgeInsets.all(0),
+                                            label: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(_con.restaurant.rate,
+                                                    style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Theme.of(context).primaryColor))),
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(builder: (context) =>
+                                                            ReviewList(routeArgument:
+                                                            RouteArgument(id: _con.restaurant.id,
+                                                                heroTag: "detail"),),));
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.star_border,
+                                                    color: Theme.of(context).primaryColor,
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Theme.of(context).accentColor.withOpacity(0.9),
+                                            shape: StadiumBorder(),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),

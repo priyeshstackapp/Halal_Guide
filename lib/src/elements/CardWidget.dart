@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/pages/reviewList.dart';
+import 'package:food_delivery_app/src/repository/user_repository.dart';
 
 import '../../generated/l10n.dart';
 import '../helpers/helper.dart';
@@ -116,7 +118,27 @@ class CardWidget extends StatelessWidget {
                       ),
                       SizedBox(height: 5),
                       Row(
-                        children: Helper.getStarsList(double.parse(restaurant.rate)),
+                        children: [
+                          SizedBox(height: 5),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Row(
+                            children: Helper.getStarsList(double.parse(restaurant.rate)),
+                          ),
+                          SizedBox(width: 10,),
+                          currentUser.value.id ==null ? Container() :  InkWell(
+                            child: Text("Review",style: TextStyle(color: Colors.amber),),
+                            onTap: () async {
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) =>
+                                      ReviewList(routeArgument:
+                                      RouteArgument(id: restaurant.id,
+                                          heroTag: "home"),),));
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

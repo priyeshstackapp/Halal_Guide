@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/pages/home.dart';
 
 import '../elements/CardsCarouselLoaderWidget.dart';
 import '../models/restaurant.dart';
@@ -33,12 +34,13 @@ class _CardsCarouselWidgetState extends State<CardsCarouselWidget> {
               itemCount: widget.restaurantsList.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/Details',
+                  onTap: () async {
+                    await Navigator.of(context).pushNamed('/Details',
                         arguments: RouteArgument(
                           id: widget.restaurantsList.elementAt(index).id,
                           heroTag: widget.heroTag,
                         ));
+                    homeCon.refreshHome();
                   },
                   child: CardWidget(restaurant: widget.restaurantsList.elementAt(index), heroTag: widget.heroTag),
                 );
