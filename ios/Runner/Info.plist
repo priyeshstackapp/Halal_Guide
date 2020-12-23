@@ -33,11 +33,9 @@
 	<key>NSContactsUsageDescription</key>
 	<string>This app requires contact access to function properly.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
+	<string>This app needs access to location for finding restaurant near you.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app requires speech access to function properly.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires location access to function properly.</string>
+	<string>This app needs access to location for finding restaurant near you.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app requires speech access to function properly.</string>
 	<key>NSMotionUsageDescription</key>
