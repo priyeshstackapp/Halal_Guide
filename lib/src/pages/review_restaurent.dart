@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:food_delivery_app/src/controllers/reviews_controller.dart';
 import 'package:food_delivery_app/src/elements/CircularLoadingWidget.dart';
+import 'package:food_delivery_app/src/models/media.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import '../../generated/l10n.dart';
 import '../models/route_argument.dart';
@@ -160,6 +163,78 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                       ),
                     ),
                     SizedBox(height: 10),
+                    Text(S.of(context).add_media,
+                        textAlign: TextAlign.center, style: Theme.of(context).textTheme.subtitle1),
+                    GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3, childAspectRatio: 1),
+                            shrinkWrap: true,
+                            itemCount: _con.images.length < 1 ? _con.images.length + 1 : 1,
+                            itemBuilder: (context, index) =>
+                            index == _con.images.length
+                                ? InkWell(
+                                    onTap: () async {
+                                      await showDialogForImagePick(context, () async {
+                                        var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                                        if (image != null) {
+                                          _con.images.add(image);
+                                          _con.notifyListeners();
+                                          Navigator.pop(context);
+                                        }
+                                      }, () async {
+                                        var image = await ImagePicker.pickVideo(source: ImageSource.gallery);
+                                        if (image != null) {
+                                          _con.images.add(image);
+                                          _con.notifyListeners();
+                                          Navigator.pop(context);
+                                        }
+                                      },() async {
+                                        var image = await ImagePicker.pickImage(source: ImageSource.camera);
+                                        if (image != null) {
+                                          _con.images.add(image);
+                                          _con.notifyListeners();
+                                          Navigator.pop(context);
+                                        }
+                                      },() async {
+                                        var image = await ImagePicker.pickVideo(source: ImageSource.camera);
+                                        if (image != null) {
+                                          _con.images.add(image);
+                                          _con.notifyListeners();
+                                          Navigator.pop(context);
+                                        }
+                                      },);
+                                    },
+                                    child: Container(
+                                      height: MediaQuery.of(context).size.width / 3,
+                                      width: MediaQuery.of(context).size.width / 3,
+                                      margin: EdgeInsets.symmetric(horizontal: 5),
+                                      alignment: Alignment.center,
+                                      child: Icon(Icons.add),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey, width: 1),
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    height: MediaQuery.of(context).size.width / 3,
+                                    width: MediaQuery.of(context).size.width / 3,
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    alignment: Alignment.center,
+                                    child: Image.file(
+                                      _con.images[index],
+                                      fit: BoxFit.cover,
+                                      height: MediaQuery.of(context).size.width / 3,
+                                      width: MediaQuery.of(context).size.width / 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey, width: 1),
+                                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                                    ),
+                                  ),
+                          ),
+                          SizedBox(height: 10),
                     FlatButton.icon(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
                       onPressed: () {
@@ -186,4 +261,61 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
           ),
         ));
   }
+}
+
+showDialogForImagePick(
+    BuildContext context,
+    VoidCallback galleryImage,
+    VoidCallback galleryVideo,
+    VoidCallback cameraImage,
+    VoidCallback cameraVideo) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return CupertinoActionSheet(
+        title: Wrap(
+          spacing: 10,
+          alignment: WrapAlignment.center,
+          children: <Widget>[
+            Icon(Icons.perm_media, color: Colors.orange),
+            Text(
+              S.of(context).select_media_type,
+              style: TextStyle(color: Colors.orange),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text(
+              S.of(context).gallery_image,
+              style: TextStyle(color: Theme.of(context).hintColor),
+            ),
+            onPressed: galleryImage,
+          ),
+          FlatButton(
+            child: new Text(
+              S.of(context).gallery_video,
+              style: TextStyle(color: Theme.of(context).hintColor),
+            ),
+            onPressed: galleryVideo,
+          ),
+          FlatButton(
+            child: new Text(
+              S.of(context).camera_image,
+              style: TextStyle(color: Theme.of(context).hintColor),
+            ),
+            onPressed: cameraImage,
+          ),
+          FlatButton(
+            child: new Text(
+              S.of(context).camera_video,
+              style: TextStyle(color: Theme.of(context).hintColor),
+            ),
+            onPressed: cameraVideo,
+          ),
+        ],
+      );
+    },
+  );
 }

@@ -105,7 +105,6 @@ class _PagesWidgetState extends State<PagesWidget> {
               if(i==2){
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('filter', json.encode({}));
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PagesWidget(currentTab: i,)),);
               }
               this._selectTab(i);
             }else{

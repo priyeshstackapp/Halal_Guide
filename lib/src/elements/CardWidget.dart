@@ -144,6 +144,7 @@ class CardWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 15),
+
                 heroTag=='map_restaurants'? Container():Expanded(
                   child: Column(
                     children: <Widget>[

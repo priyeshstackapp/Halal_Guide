@@ -20,10 +20,12 @@ class ReviewsController extends ControllerMVC {
   List<Food> foodsOfOrder = [];
   List<OrderStatus> orderStatus = <OrderStatus>[];
   GlobalKey<ScaffoldState> scaffoldKey;
+  List<dynamic> images;
 
   ReviewsController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
     this.restaurantReview = new Review.init("0");
+    this.images = List();
   }
 
   void listenForOrder({String orderId, String message}) async {
@@ -78,7 +80,7 @@ class ReviewsController extends ControllerMVC {
   }
 
   void addOnlyRestaurantReview(Review _review) async {
-    restaurantRepo.addRestaurantReview(_review, this.restaurant).then((value) {
+    restaurantRepo.addRestaurantReview(_review, this.restaurant,this.images).then((value) {
       Navigator.pop(context,"Yes");
       scaffoldKey?.currentState?.showSnackBar(SnackBar(
         content: Text(S.of(context).the_restaurant_has_been_rated_successfully),
@@ -96,7 +98,7 @@ class ReviewsController extends ControllerMVC {
   }
 
   void addRestaurantReview(Review _review) async {
-    restaurantRepo.addRestaurantReview(_review, this.order.foodOrders[0].food.restaurant).then((value) {
+    restaurantRepo.addRestaurantReview(_review, this.order.foodOrders[0].food.restaurant,images).then((value) {
       refreshOrder();
       scaffoldKey?.currentState?.showSnackBar(SnackBar(
         content: Text(S.of(context).the_restaurant_has_been_rated_successfully),

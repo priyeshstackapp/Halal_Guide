@@ -7,6 +7,7 @@ class Review {
   String id;
   String review;
   String rate;
+  String media;
   User user;
 
   Review();
@@ -16,6 +17,7 @@ class Review {
     try {
       id = jsonMap['id'].toString();
       review = jsonMap['review'];
+      media = jsonMap['media'];
       rate = jsonMap['rate'].toString() ?? '0';
       user = jsonMap['user'] != null ? User.fromJSON(jsonMap['user']) : User.fromJSON({});
     } catch (e) {
@@ -32,6 +34,7 @@ class Review {
     map["id"] = id;
     map["review"] = review;
     map["rate"] = rate;
+    map["media"] = media;
     map["user_id"] = user?.id;
     return map;
   }

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as dioh;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/custom_trace.dart';
@@ -150,7 +152,17 @@ Future<Stream<Review>> getRecentReviews() async {
   }
 }
 
-Future<Review> addRestaurantReview(Review review, Restaurant restaurant) async {
+Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dynamic> images) async {
+
+  String imageUrl;
+  if(images.isNotEmpty){
+    for(int i = 0; i<images.length;i++){
+      imageUrl = await uploadImageCallBack(images[i]);
+    }
+  }
+
+  review.media = imageUrl;
+
   final String url = '${GlobalConfiguration().getString('api_base_url')}restaurant_reviews';
   print(url);
   final client = new http.Client();
@@ -162,6 +174,7 @@ Future<Review> addRestaurantReview(Review review, Restaurant restaurant) async {
       body: json.encode(review.ofRestaurantToMap(restaurant)),
     );
     if (response.statusCode == 200) {
+      print(response.body);
       return Review.fromJSON(json.decode(response.body)['data']);
     } else {
       print(CustomTrace(StackTrace.current, message: response.body).toString());
@@ -170,5 +183,27 @@ Future<Review> addRestaurantReview(Review review, Restaurant restaurant) async {
   } catch (e) {
     print(CustomTrace(StackTrace.current, message: url).toString());
     return Review.fromJSON({});
+  }
+}
+
+Future<String> uploadImageCallBack(file) async {
+  dioh.FormData formData = dioh.FormData.fromMap({
+    "file": await dioh.MultipartFile.fromFile(file.path)
+  });
+
+  final String uploadUrl = '${GlobalConfiguration().getString('api_base_url')}review-upload?api_token=ItTeYrqUVC0DUxi2xmzUmnhswS6pvPFvGiY3yxj1enSqzycw8vArNioESyQZ';
+  print(uploadUrl);
+
+  Dio dio = Dio();
+
+  dioh.Response response = await dio.post(uploadUrl,data: formData);
+
+  print(response.statusCode);
+  print(response.data);
+
+  if(response.statusCode==200){
+    return response.data['data']['url'];
+  }else{
+    return null;
   }
 }
