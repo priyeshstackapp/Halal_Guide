@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:food_delivery_app/src/models/cuisine_model.dart';
+import 'package:food_delivery_app/src/models/register_restaurant_model.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dioh;
@@ -207,3 +209,86 @@ Future<String> uploadImageCallBack(file) async {
     return null;
   }
 }
+
+
+Future<RegisterRestaurantsData> registerRestaurantPostApi(Map<String, dynamic> finalMap) async {
+
+/*  String imageUrl;
+  if(images.isNotEmpty){
+    for(int i = 0; i<images.length;i++){
+      imageUrl = await uploadImageCallBack(images[i]);
+    }
+  }
+  review.media = imageUrl;*/
+
+  final String url = '${GlobalConfiguration().getString('api_base_url')}restaurants';
+  print(url);
+  final client = new http.Client();
+  // review.user = currentUser.value;
+  try {
+    final response = await client.post(
+      url,
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      body: json.encode(finalMap),
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return RegisterRestaurantsData.fromJson(json.decode(response.body)['data']);
+      // return Review.fromJSON(json.decode(response.body)['data']);
+    } else {
+      print(CustomTrace(StackTrace.current, message: response.body).toString());
+      return RegisterRestaurantsData.fromJson({});
+    }
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return RegisterRestaurantsData.fromJson({});
+  }
+}
+
+
+Future<Stream<CuisineModel>> getCuisineApi() async {
+  final String url = '${GlobalConfiguration().getString('api_base_url')}cuisines';
+  print(url);
+  try {
+    final client = new http.Client();
+    final streamedRest = await client.send(http.Request('get', Uri.parse(url)));
+    return streamedRest.stream.transform(utf8.decoder).transform(json.decoder).map((data) => Helper.getData(data)).expand((data) => (data as List)).map((data) {
+      print("remove data $data");
+      return CuisineModel.fromJson(data);
+    });
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return new Stream.value(new CuisineModel.fromJson({}));
+  }
+}
+
+
+// Future<Response> addLikePost(Map<String, dynamic> postData) async {
+//   String url = App.baseUrlSA + App.wallLike;
+//   var headerData = {
+//     "Authorization": "Bearer ${appState.accessToken}",
+//     "Content-Type": "application/json"
+//   };
+//   print(url + headerData.toString() + postData.toString());
+//   try {
+//     Response response =
+//         await http.post(url, headers: headerData, body: jsonEncode(postData));
+//     print(response.statusCode);
+//     EasyLoading.dismiss();
+//     if (response != null &&
+//         (response.statusCode == 200 || response.statusCode == 201)) {
+//       print(response.body);
+//       return response;
+//     } else {
+//       print(response.body);
+//       var jsonData = jsonDecode(response.body);
+//       Utils().showToast(jsonData['message']);
+//       return response;
+//     }
+//   } catch (e) {
+//     print(e);
+//     EasyLoading.dismiss();
+//     Utils().showToast(e);
+//     return null;
+//   }
+// }

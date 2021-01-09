@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_first.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -122,6 +123,23 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
+          ListTile(
+            onTap: () {
+              // Navigator.of(context).pushNamed('/Pages', arguments: 4);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegFirstPage()));
+            },
+            leading: Icon(
+              Icons.app_registration,
+              color: Theme.of(context).focusColor.withOpacity(1),
+            ),
+            title: Text(
+              S.of(context).register_user,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ),
+
+          //------------------
+
           ListTile(
             dense: true,
             title: Text(

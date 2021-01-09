@@ -405,6 +405,17 @@ class S {
     );
   }
 
+  /// 'register user'
+  String get register_user {
+    return Intl.message(
+      'Register User',
+      name: 'register_user',
+      desc: '',
+      args: [],
+    );
+  }
+
+
   /// `g`
   String get g {
     return Intl.message(
