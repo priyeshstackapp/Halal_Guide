@@ -6,6 +6,8 @@ import '../../generated/l10n.dart';
 import '../controllers/profile_controller.dart';
 import '../repository/settings_repository.dart';
 import '../repository/user_repository.dart';
+import '../repository/user_repository.dart' as userRepo;
+
 
 class DrawerWidget extends StatefulWidget {
   @override
@@ -123,10 +125,11 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
+          // userRepo.currentUser.value.id != null ?
           ListTile(
             onTap: () {
-              // Navigator.of(context).pushNamed('/Pages', arguments: 4);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegFirstPage()));
+              // Navigator.of(context).pushNamed('/Pages', arguments: 5);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegFirstWidget()));
             },
             leading: Icon(
               Icons.app_registration,
@@ -136,7 +139,8 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               S.of(context).register_user,
               style: Theme.of(context).textTheme.subtitle1,
             ),
-          ),
+          ) ,
+              // : Container(),
 
           //------------------
 

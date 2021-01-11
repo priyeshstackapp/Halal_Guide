@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/src/models/cuisine_model.dart';
+import 'package:food_delivery_app/src/models/cuisine_response_model.dart';
+import 'package:food_delivery_app/src/models/register__restaurant_image_model.dart';
 import 'package:food_delivery_app/src/models/register_restaurant_model.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:google_map_location_picker/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dioh;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../helpers/custom_trace.dart';
 import '../helpers/helper.dart';
 import '../models/address.dart';
@@ -16,6 +19,7 @@ import '../models/filter.dart';
 import '../models/restaurant.dart';
 import '../models/review.dart';
 import '../repository/user_repository.dart';
+import '../repository/user_repository.dart' as userRepo;
 
 Future<Stream<Restaurant>> getNearRestaurants(Address myLocation, Address areaLocation) async {
   Uri uri = Helper.getUri('api/restaurants');
@@ -261,6 +265,88 @@ Future<Stream<CuisineModel>> getCuisineApi() async {
     return new Stream.value(new CuisineModel.fromJson({}));
   }
 }
+
+
+Future<CuisineApi> cuisineUserOwnerShipPostApi(Map<String, dynamic> finalMap) async {
+
+
+  final String url = '${GlobalConfiguration().getString('api_base_url')}cuisine/restro?api_token=${userRepo.currentUser.value.apiToken}';
+  print(url);
+  final client = new http.Client();
+  try {
+
+    final response = await client.post(
+      url,
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      body: json.encode(finalMap),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return CuisineApi.fromJson(json.decode(response.body));
+      // return Review.fromJSON(json.decode(response.body)['data']);
+    } else if(response.statusCode == 404) {
+      print(response.body);
+      Fluttertoast.showToast(msg: "Duplicate entry");
+      return CuisineApi.fromJson({});
+    } else {
+      print(CustomTrace(StackTrace.current, message: response.body).toString());
+      return CuisineApi.fromJson({});
+    }
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return CuisineApi.fromJson({});
+  }
+}
+
+
+
+Future<RegisterRestaurantImageModel> restaurantImageUploadApi(Map<String, dynamic> finalMap, File file ) async {
+
+  final String url = '${GlobalConfiguration().getString('api_base_url')}upload/image?api_token=${userRepo.currentUser.value.apiToken}';
+  print(url);
+
+  final client = new http.Client();
+
+  FormData formData = new FormData.fromMap(finalMap);
+
+  if (file != null) {
+    String fileNm = file.path.substring(
+        file.path.lastIndexOf("/") + 1,
+        file.path.length);
+
+    formData.files.add(
+      MapEntry(
+        "file",
+        MultipartFile.fromFileSync(file.path,
+            filename: fileNm),
+      ),
+    );
+  } else {
+print("wrong");
+  }
+
+  try {
+    final response = await client.post(
+      url,
+      // headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      body: formData,
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return RegisterRestaurantImageModel.fromJson(json.decode(response.body));
+      // return Review.fromJSON(json.decode(response.body)['data']);
+    } else {
+      print(CustomTrace(StackTrace.current, message: response.body).toString());
+      return RegisterRestaurantImageModel.fromJson({});
+    }
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return RegisterRestaurantImageModel.fromJson({});
+  }
+}
+
+
 
 
 // Future<Response> addLikePost(Map<String, dynamic> postData) async {

@@ -14,6 +14,11 @@ class RestaurantRegThirdPage extends StatefulWidget {
 
 class _RestaurantRegThirdPageState extends StateMVC<RestaurantRegThirdPage> {
 
+  bool isOpen = false;
+
+  bool textMessageShow = false;
+
+
   RestaurantRegUserController _con;
 
   _RestaurantRegThirdPageState() : super(RestaurantRegUserController()) {
@@ -21,7 +26,16 @@ class _RestaurantRegThirdPageState extends StateMVC<RestaurantRegThirdPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _con.restaurantId = widget.restaurantId;
+    _con.displayCuisinesApi();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Apply for restaurant"),
@@ -43,7 +57,7 @@ class _RestaurantRegThirdPageState extends StateMVC<RestaurantRegThirdPage> {
               width: config.App(context).appWidth(84),
               height: config.App(context).appHeight(29.5),
               child: Text(
-                "Add Timer",
+                "Restaurant Cuisine",
                 // S.of(context).lets_start_with_register,
                 style: Theme.of(context).textTheme.headline2.merge(TextStyle(color: Theme.of(context).primaryColor)),
               ),
@@ -67,7 +81,77 @@ class _RestaurantRegThirdPageState extends StateMVC<RestaurantRegThirdPage> {
               ),
               padding: EdgeInsets.symmetric(vertical: 25, horizontal: 25),
 //              height: config.App(context).appHeight(55),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ListView.builder(
+                        itemCount: _con.cuisineData.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              // value: selections[index] == index,
+                              value: _con.cuisineData[index].isSelected,
+                              onChanged: (bool newValue) {
+                                setState(() {
+                                  _con.cuisineData[index].isSelected = newValue;
+                                  if(_con.selectionsId.contains(_con.cuisineData[index].id)){
+                                    _con.selectionsId.remove(_con.cuisineData[index].id);
+                                  } else {
+                                    _con.selectionsId.add(_con.cuisineData[index].id);
+                                  }
 
+                                });
+                                print(_con.cuisineData[index].isSelected);
+                                print(_con.selectionsId);
+                              },
+                            ),
+                            Text(_con.cuisineData[index].name, style: TextStyle(fontSize: 20))
+                          ],
+                        ),
+                      );
+                    }),
+
+                    SizedBox(height: 25),
+
+                    textMessageShow ? Text("Please Select One Item", style: TextStyle(fontSize: 20, color: Colors.red)) : Container() ,
+
+                    textMessageShow ? SizedBox(height: 25) : Container(),
+
+                    MaterialButton(
+                      onPressed: () {
+                        // Navigator.of(context).pushNamed('/MobileVerification');
+
+                        if(_con.selectionsId.isEmpty) {
+                          textMessageShow = true;
+                          setState(() {});
+                        } else {
+                          textMessageShow = false;
+                          setState(() {});
+                          _con.cuisineUserOwnerShipApi();
+                        }
+                      },
+                      height: 50,
+                      minWidth: config.App(context).appWidth(88),
+                      padding: EdgeInsets.symmetric(vertical: 14,),
+                      color: Theme.of(context).accentColor.withOpacity(0.1),
+                      shape: StadiumBorder(),
+                      child: Text(
+                        'Submit',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 25),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

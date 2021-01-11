@@ -1,6 +1,7 @@
 class CuisineModel {
   int id;
   String name;
+  bool isSelected = false;
   String description;
   String createdAt;
   String updatedAt;
@@ -10,6 +11,7 @@ class CuisineModel {
   CuisineModel(
       {this.id,
         this.name,
+        this.isSelected,
         this.description,
         this.createdAt,
         this.updatedAt,

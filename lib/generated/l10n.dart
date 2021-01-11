@@ -1626,6 +1626,15 @@ class S {
     );
   }
 
+  String get enter_YouTube_Vimeo_Link {
+    return Intl.message(
+      'Enter YouTube Vimeo Link',
+      name: 'enter_youTube_vimeo_link',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `How would you rate this restaurant ?`
   String get how_would_you_rate_this_restaurant_ {
     return Intl.message(

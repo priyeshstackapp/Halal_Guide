@@ -165,6 +165,7 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                   enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
                                 ),
                               ),
+
                               SizedBox(height: 10),
                               FlatButton.icon(
                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),

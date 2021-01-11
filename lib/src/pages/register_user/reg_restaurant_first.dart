@@ -1,14 +1,25 @@
+import 'dart:async';
+import 'dart:html' as html;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/controllers/restaurant_user_controller.dart';
 import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_second.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import '../../helpers/app_config.dart' as config;
 import '../../../generated/l10n.dart';
+import 'package:mvc_pattern/mvc_pattern.dart';
 
-class RestaurantRegFirstPage extends StatefulWidget {
+
+class RestaurantRegFirstWidget extends StatefulWidget {
+  final GlobalKey<ScaffoldState> parentScaffoldKey;
+
+  RestaurantRegFirstWidget({Key key, this.parentScaffoldKey}) : super(key: key);
+  
   @override
-  _RestaurantRegFirstPageState createState() => _RestaurantRegFirstPageState();
+  _RestaurantRegFirstWidgetState createState() => _RestaurantRegFirstWidgetState();
 }
 
-class _RestaurantRegFirstPageState extends State<RestaurantRegFirstPage> {
+class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> {
 
 
   TextEditingController nameController = TextEditingController(text: "vihhh ");
@@ -23,15 +34,41 @@ class _RestaurantRegFirstPageState extends State<RestaurantRegFirstPage> {
 
   String availableDropText = "Yes";
   String closeDropText = "Yes";
-
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  Image image;
 
+
+  RestaurantRegUserController _con;
+  _RestaurantRegFirstWidgetState() : super(RestaurantRegUserController()) {
+    _con = controller;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _con.scaffoldKey,
       appBar: AppBar(
-        title: Text("Apply for restaurant"),
+        leading: new IconButton(
+          icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
+          onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Apply for restaurant", style: Theme.of(context).textTheme.headline6.merge(TextStyle(letterSpacing: 1.3)),
+        ),
+        actions: <Widget>[
+          // new ShoppingCartButtonWidget(iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+        ],
       ),
+   /*   appBar: AppBar(
+        title: Text("Apply for restaurant"),
+        leading: new IconButton(
+          icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
+          onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+        ),
+      ),*/
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: <Widget>[
@@ -103,6 +140,78 @@ class _RestaurantRegFirstPageState extends State<RestaurantRegFirstPage> {
                       closed(),
                       SizedBox(height: 30),
 
+                      InkResponse(
+                        onTap: () async {
+                          print("hello");
+                         /* final _image = await FlutterWebImagePicker.getImage;
+                          setState(() {
+                            image = _image;
+                          });*/
+
+
+                          /*Image fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
+
+                          if (fromPicker != null) {
+                            setState(() {
+                              pickedImage = fromPicker;
+                            });
+                          }*/
+
+
+                         /* html.File imageFile =
+                          await ImagePickerWeb.getImage(outputType: ImageType.file);
+
+                          if (imageFile != null) {
+                            debugPrint(imageFile.name.toString());
+                          }*/
+
+                          // _startFilePicker();
+
+                          // pickImage();
+
+                          _startFilePicker();
+                          /*pickFile().then((value) {
+                            print(value);
+                            print(value.relativePath);
+                            print(value.name);
+                          });*/
+                          // _con.imageUploadApi();
+
+
+
+                          /* FilePickerResult result = await FilePicker.platform.pickFiles();
+
+                          if(result != null) {
+                            print(result.files.single.path);
+                            File file = File(result.files.single.path);
+                            print(file.path);
+
+                          } else {
+                            // User canceled the picker
+                          }*/
+                          // _setImage();
+                        },
+                        child: pickedImage != null ? pickedImage /*Image(
+                            height: 150,
+                            width: 150,
+                            image: image.image
+                        )*/ : Container(
+                          height: 200,
+                          width: 200,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                             border: Border.all(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(Icons.add, color: Colors.black),
+                              Text("add images", style: TextStyle(color: Colors.black))
+                            ],
+                          ),
+                        ),
+                      ),
+
                       /*  BlockButtonWidget(
                         text: Text(
                           S.of(context).register,
@@ -114,8 +223,8 @@ class _RestaurantRegFirstPageState extends State<RestaurantRegFirstPage> {
                         },
                       ),*/
                       SizedBox(height: 25),
-                     MaterialButton(
-                       onPressed: () {
+                      MaterialButton(
+                        onPressed: () {
 
                          // if (loginFormKey.currentState.validate()) {
                            Map<String, dynamic> sendMapData = {
@@ -419,4 +528,75 @@ class _RestaurantRegFirstPageState extends State<RestaurantRegFirstPage> {
     );
 
   }
+
+  _startFilePicker() async {
+    html.InputElement uploadInput = html.FileUploadInputElement();
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      // read file content as dataURL
+      final files = uploadInput.files;
+      if (files.length == 1) {
+        html.File file = files[0];
+        print("hello 1 $file");
+        html.FileReader reader =  html.FileReader();
+
+        print(reader);
+
+        reader.onLoadEnd.listen((e) {
+          setState(() {
+            uploadedImage = reader.result;
+            print("hello2 $uploadedImage");
+          });
+          _con.imageUploadApi(uploadedImage);
+        });
+        reader.onError.listen((fileEvent) {
+          setState(() {
+            // option1Text = "Some Error occured while reading the file";
+          });
+        });
+        reader.readAsArrayBuffer(file);
+        print(reader);
+      }
+    });
+  }
+
+
+  Future<html.File> pickFile() async {
+    final Map<String, dynamic> data = {};
+    final html.FileUploadInputElement input = html.FileUploadInputElement();
+    input..accept = 'image/*';
+    input.click();
+    await input.onChange.first;
+    if (input.files.isEmpty) return null;
+    return input.files[0];
+  }
+
+  Uint8List uploadedImage;
+
+
+  pickImage() async {
+    /// You can set the parameter asUint8List to true
+    /// to get only the bytes from the image
+    /* Uint8List bytesFromPicker =
+        await ImagePickerWeb.getImage(outputType: ImageType.bytes);
+
+    if (bytesFromPicker != null) {
+      debugPrint(bytesFromPicker.toString());
+    } */
+
+    /// Default behavior would be getting the Image.memory
+    Image fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
+
+    if (fromPicker != null) {
+      setState(() {
+        pickedImage = fromPicker;
+      });
+    }
+  }
+
+  Image pickedImage;
+
+
+
 }

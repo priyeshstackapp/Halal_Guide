@@ -1,8 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_third.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import '../repository/restaurant_repository.dart' as restaurantRepo;
+import '../repository/user_repository.dart' as userRepo;
 
 class RestaurantRegUserController extends ControllerMVC {
 
@@ -25,11 +28,48 @@ class RestaurantRegUserController extends ControllerMVC {
   Map saturdayOpen, saturdayClose = null;
 
   bool isOpen = false;
+  GlobalKey<ScaffoldState> scaffoldKey;
+  String base64Image = "";
+  String uploadedImageId = "";
 
   RestaurantRegUserController() {
-
-    displayCuisinesApi();
+    scaffoldKey = new GlobalKey<ScaffoldState>();
   }
+
+
+
+  //reg restaurant first screen
+
+
+  imageUploadApi (Uint8List uploadedImage, {File file}) {
+    String data = selectionsId.join(",");
+    print(data);
+    // Map<String, dynamic> imageData = {
+    //   "field": "image",
+    //   "file": uploadedImage,
+    // };
+
+    Map<String, dynamic> map = new Map<String, dynamic>();
+    map['field'] = 'image';
+    // map['file'] = file;
+
+    print(map);
+    restaurantRepo.restaurantImageUploadApi(map, file).then((value) {
+      if (value != null && value.success == true) {
+        print(value.message);
+        uploadedImageId = value.data.image;
+        setState((){});
+        // int restaurantId = value.id;
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
+      } else {
+        print("Some thing wrong");
+      }
+    });
+  }
+
+
+
+  //reg restaurant second screen
 
   registerUserApi() {
 
@@ -64,20 +104,14 @@ class RestaurantRegUserController extends ControllerMVC {
     finalMap.addAll(mapData);
     print(finalMap);
 
-    // void addOnlyRestaurantReview(Review _review) async {
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: 2)));
+
       restaurantRepo.registerRestaurantPostApi(finalMap).then((value) {
-
-
-        if(value != null){
+        if(value != null && value.id != null) {
           print(value.id);
           int restaurantId = value.id;
           Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
         }
-
-        // Navigator.pop(context,"Yes");
-     /*   scaffoldKey?.currentState?.showSnackBar(SnackBar(
-          content: Text(S.of(context).the_restaurant_has_been_rated_successfully),
-        ));*/
       });
 
   }
@@ -95,15 +129,37 @@ class RestaurantRegUserController extends ControllerMVC {
   //
   //   CuisineModel
   // }
+
   List<CuisineModel> cuisineData = <CuisineModel>[];
+  List<int> selectionsId = [];
+  int restaurantId = 0;
 
   Future<void> displayCuisinesApi() async {
     final Stream<CuisineModel> stream = await restaurantRepo.getCuisineApi();
     stream.listen((CuisineModel _review) {
-      print(_review);
       setState(() => cuisineData.add(_review));
+
+      print(cuisineData.length);
+
     }, onError: (a) {}, onDone: () {});
   }
 
+  Future<void> cuisineUserOwnerShipApi () {
+    String data = selectionsId.join(",");
+    print(data);
+    Map<String, dynamic> mapData = {
+      "restaurant_id": restaurantId,
+      "cuisine_id": data,
+      "user_id": userRepo.currentUser.value.id,
+    };
+    print(mapData);
+    restaurantRepo.cuisineUserOwnerShipPostApi(mapData).then((value) {
+      if (value != null && value.success == true) {
+        print(value.message);
+        // int restaurantId = value.id;
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
+      }
+    });
+  }
 
 }

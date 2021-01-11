@@ -162,6 +162,24 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
                       ),
                     ),
+
+                    SizedBox(height: 10),
+                    TextField(
+                      onChanged: (text) {
+                        _con.restaurantReview.review = text;
+                      },
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(12),
+                        hintText: S.of(context).enter_YouTube_Vimeo_Link,
+                        hintStyle: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 14)),
+                        border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                      ),
+                    ),
+
                     SizedBox(height: 10),
                     Text(S.of(context).add_media,
                         textAlign: TextAlign.center, style: Theme.of(context).textTheme.subtitle1),
