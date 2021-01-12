@@ -341,7 +341,7 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
   startTimeShow(String timeShow) {
     return Container(
       height: 50,
-      width: 110,
+      width: 150,
       margin: EdgeInsets.only(left: 10, right: 10),
       padding: EdgeInsets.only(left: 5, right: 5),
 
@@ -357,6 +357,7 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
               child: new Text(value['time']),
             );
           }).toList(),
+          hint: Text("Select time"),
           // value:  _con.sundayOpen,
           value:  showMenuData(timeShow),
           onChanged: (value) {

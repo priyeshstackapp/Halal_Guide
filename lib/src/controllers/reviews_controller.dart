@@ -117,4 +117,26 @@ class ReviewsController extends ControllerMVC {
       }
     });
   }
+
+
+  //image uploading
+  // imageUploadApi (String imageBase64) {
+  //   // imageUploadApi (Uint8List uploadedImage, {File file}) {
+  //
+  //   Map<String, dynamic> imageMap = {"file":imageBase64};
+  //
+  //   print(imageMap);
+  //   restaurantRepo.restaurantImageUploadApi(imageMap).then((value) {
+  //     if (value != null && value.success == true) {
+  //       print(value.message);
+  //
+  //       uploadedImageId = value.data.image;
+  //       setState((){});
+  //       // int restaurantId = value.id;
+  //       // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
+  //     } else {
+  //       print("Some thing wrong");
+  //     }
+  //   });
+  // }
 }

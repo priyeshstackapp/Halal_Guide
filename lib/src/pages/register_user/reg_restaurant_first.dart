@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:html' as html;
+import 'dart:html';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_image_picker/flutter_web_image_picker.dart';
 import 'package:food_delivery_app/src/controllers/restaurant_user_controller.dart';
 import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_second.dart';
-import 'package:image_picker_web/image_picker_web.dart';
 import '../../helpers/app_config.dart' as config;
 import '../../../generated/l10n.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
@@ -14,7 +17,7 @@ class RestaurantRegFirstWidget extends StatefulWidget {
   final GlobalKey<ScaffoldState> parentScaffoldKey;
 
   RestaurantRegFirstWidget({Key key, this.parentScaffoldKey}) : super(key: key);
-  
+
   @override
   _RestaurantRegFirstWidgetState createState() => _RestaurantRegFirstWidgetState();
 }
@@ -22,15 +25,15 @@ class RestaurantRegFirstWidget extends StatefulWidget {
 class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> {
 
 
-  TextEditingController nameController = TextEditingController(text: "vihhh ");
-  TextEditingController descriptionController = TextEditingController(text: "203 vinagar");
-  TextEditingController addressController = TextEditingController(text: "20 23 sociaty 1");
-  TextEditingController phoneController = TextEditingController(text: "789456");
-  TextEditingController mobileController = TextEditingController(text: "1457894561");
-  TextEditingController infoController = TextEditingController(text: "test data data ");
-  TextEditingController deliveryFeeController = TextEditingController(text: "1");
-  TextEditingController deliveryRangeController = TextEditingController(text: "1");
-  TextEditingController defaultTexController = TextEditingController(text: "1");
+  TextEditingController nameController = TextEditingController(text: "");
+  TextEditingController descriptionController = TextEditingController(text: "");
+  TextEditingController addressController = TextEditingController(text: "");
+  TextEditingController phoneController = TextEditingController(text: "");
+  TextEditingController mobileController = TextEditingController(text: "");
+  TextEditingController infoController = TextEditingController(text: "");
+  TextEditingController deliveryFeeController = TextEditingController(text: "");
+  TextEditingController deliveryRangeController = TextEditingController(text: "");
+  TextEditingController defaultTexController = TextEditingController(text: "");
 
   String availableDropText = "Yes";
   String closeDropText = "Yes";
@@ -46,7 +49,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
   Widget build(BuildContext context) {
     return Scaffold(
       key: _con.scaffoldKey,
-      appBar: AppBar(
+      /*appBar: AppBar(
         leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
           onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
@@ -61,14 +64,14 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
         actions: <Widget>[
           // new ShoppingCartButtonWidget(iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
         ],
-      ),
-   /*   appBar: AppBar(
+      ),*/
+      appBar: AppBar(
         title: Text("Apply for restaurant"),
-        leading: new IconButton(
+      /*  leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
           onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
-        ),
-      ),*/
+        ),*/
+      ),
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: <Widget>[
@@ -135,67 +138,28 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                       SizedBox(height: 30),
                       defaultTex(),
                       SizedBox(height: 30),
+                      Text("Available For Delivery", style: TextStyle(color: Theme.of(context).accentColor)),
+                      SizedBox(height: 10),
                       availableForDelivery(),
                       SizedBox(height: 30),
+                      Text("closed", style: TextStyle(color: Theme.of(context).accentColor)),
+                      SizedBox(height: 10),
                       closed(),
                       SizedBox(height: 30),
 
                       InkResponse(
                         onTap: () async {
                           print("hello");
-                         /* final _image = await FlutterWebImagePicker.getImage;
+                          // getMultipleImageInfos();
+                   /*       final _image = await FlutterWebImagePicker.getImage;
                           setState(() {
                             image = _image;
                           });*/
-
-
-                          /*Image fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
-
-                          if (fromPicker != null) {
-                            setState(() {
-                              pickedImage = fromPicker;
-                            });
-                          }*/
-
-
-                         /* html.File imageFile =
-                          await ImagePickerWeb.getImage(outputType: ImageType.file);
-
-                          if (imageFile != null) {
-                            debugPrint(imageFile.name.toString());
-                          }*/
-
-                          // _startFilePicker();
-
-                          // pickImage();
-
-                          _startFilePicker();
-                          /*pickFile().then((value) {
-                            print(value);
-                            print(value.relativePath);
-                            print(value.name);
-                          });*/
-                          // _con.imageUploadApi();
-
-
-
-                          /* FilePickerResult result = await FilePicker.platform.pickFiles();
-
-                          if(result != null) {
-                            print(result.files.single.path);
-                            File file = File(result.files.single.path);
-                            print(file.path);
-
-                          } else {
-                            // User canceled the picker
-                          }*/
-                          // _setImage();
+                          _selectImage();
                         },
-                        child: pickedImage != null ? pickedImage /*Image(
-                            height: 150,
-                            width: 150,
-                            image: image.image
-                        )*/ : Container(
+                        child: _con.imageStr != null && _con.imageStr.isNotEmpty ? Image(image: NetworkImage(_con.imageStr))  :
+
+                        Container(
                           height: 200,
                           width: 200,
                           alignment: Alignment.center,
@@ -204,6 +168,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                             borderRadius: BorderRadius.circular(10)
                           ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.add, color: Colors.black),
                               Text("add images", style: TextStyle(color: Colors.black))
@@ -225,28 +190,43 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                       SizedBox(height: 25),
                       MaterialButton(
                         onPressed: () {
+                           Map<String, dynamic> sendMapData ={};
+                          print("hello");
+                         if (loginFormKey.currentState.validate()) {
+                           if (_con.uploadedImageId != null) {
+                             sendMapData   = {
+                               "name": nameController.text,
+                               "description": descriptionController.text,
+                               "address": addressController.text,
+                               "latitude": "21.235270",
+                               "longitude": "72.868731",
+                               "phone": phoneController.text,
+                               "mobile": mobileController.text,
+                               "information": infoController.text,
+                               "delivery_fee": int.parse(
+                                   deliveryFeeController.text),
+                               "delivery_range": int.parse(
+                                   deliveryRangeController.text),
+                               "default_tax": int.parse(
+                                   defaultTexController.text),
+                               "available_for_delivery": availableDropText ==
+                                   "Yes" ? 1 : 0,
+                               "closed": closeDropText == "Yes" ? 1 : 0,
+                               "image": _con.uploadedImageId
+                             };
+                             Navigator.push(context, MaterialPageRoute(
+                                 builder: (context) =>
+                                     RestaurantRegSecondPage(firstPageData: sendMapData)));
 
-                         // if (loginFormKey.currentState.validate()) {
-                           Map<String, dynamic> sendMapData = {
-                             "name": nameController.text,
-                             "description": descriptionController.text,
-                             "address": addressController.text,
-                             "latitude":  "21.235270",
-                             "longitude": "72.868731",
-                             "phone": phoneController.text,
-                             "mobile": mobileController.text,
-                             "information": infoController.text,
-                             "delivery_fee": int.parse(deliveryFeeController.text),
-                             "delivery_range": int.parse(deliveryRangeController.text),
-                             "default_tax": int.parse(defaultTexController.text),
-                             "available_for_delivery": availableDropText == "Yes" ? 1 : 0,
-                             "closed": closeDropText == "Yes" ? 1 : 0,
-                           };
+                           } else {
+                             _con.scaffoldKey?.currentState?.showSnackBar(
+                                 SnackBar(
+                                   content: Text("Image not selected"),
+                                   // content: Text(S.of(context).wrong_email_or_password),
+                                 ));
+                           }
+                         }
 
-                           Navigator.push(context, MaterialPageRoute(
-                               builder: (context) =>
-                                   RestaurantRegSecondPage(firstPageData: sendMapData)));
-                         // }
                          // Navigator.of(context).pushNamed('/MobileVerification');
                        },
                        height: 50,
@@ -414,7 +394,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
         // labelText: S.of(context).password,
         labelStyle: TextStyle(color: Theme.of(context).accentColor),
         contentPadding: EdgeInsets.all(12),
-        hintText: '£20',
+        hintText: '\$20',
         hintStyle: TextStyle(color: Theme.of(context).focusColor.withOpacity(0.7)),
         // prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).accentColor),
         border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
@@ -456,7 +436,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
         // labelText: S.of(context).password,
         labelStyle: TextStyle(color: Theme.of(context).accentColor),
         contentPadding: EdgeInsets.all(12),
-        hintText: '£20',
+        hintText: '\$20',
         hintStyle: TextStyle(color: Theme.of(context).focusColor.withOpacity(0.7)),
         // prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).accentColor),
         border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
@@ -529,74 +509,69 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
 
   }
 
-  _startFilePicker() async {
-    html.InputElement uploadInput = html.FileUploadInputElement();
-    uploadInput.click();
 
-    uploadInput.onChange.listen((e) {
-      // read file content as dataURL
-      final files = uploadInput.files;
-      if (files.length == 1) {
-        html.File file = files[0];
-        print("hello 1 $file");
-        html.FileReader reader =  html.FileReader();
-
-        print(reader);
-
-        reader.onLoadEnd.listen((e) {
-          setState(() {
-            uploadedImage = reader.result;
-            print("hello2 $uploadedImage");
-          });
-          _con.imageUploadApi(uploadedImage);
-        });
-        reader.onError.listen((fileEvent) {
-          setState(() {
-            // option1Text = "Some Error occured while reading the file";
-          });
-        });
-        reader.readAsArrayBuffer(file);
-        print(reader);
-      }
-    });
-  }
-
-
-  Future<html.File> pickFile() async {
-    final Map<String, dynamic> data = {};
-    final html.FileUploadInputElement input = html.FileUploadInputElement();
-    input..accept = 'image/*';
-    input.click();
-    await input.onChange.first;
-    if (input.files.isEmpty) return null;
-    return input.files[0];
-  }
-
-  Uint8List uploadedImage;
-
-
-  pickImage() async {
-    /// You can set the parameter asUint8List to true
-    /// to get only the bytes from the image
-    /* Uint8List bytesFromPicker =
-        await ImagePickerWeb.getImage(outputType: ImageType.bytes);
-
-    if (bytesFromPicker != null) {
-      debugPrint(bytesFromPicker.toString());
-    } */
-
-    /// Default behavior would be getting the Image.memory
+/*  Future<void> getMultipleImageInfos() async {
     Image fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
 
     if (fromPicker != null) {
       setState(() {
-        pickedImage = fromPicker;
+        _imageWidget = fromPicker;
       });
     }
+    }*/
+
+
+  Future<void> _selectImage() async {
+    final completer = Completer<List<String>>();
+    final InputElement input = document.createElement('input');
+    input
+      ..type = 'file'
+      ..multiple = false
+      ..accept = 'image/*';
+    input.click();
+    // onChange doesn't work on mobile safari
+    input.addEventListener('change', (e) async {
+      final List<File> files = input.files;
+
+      Iterable<Future<String>> resultsFutures = files.map((file) {
+        final reader = FileReader();
+        reader.readAsDataUrl(file);
+        reader.onError.listen((error) => completer.completeError(error));
+        return reader.onLoad.first.then((_) => reader.result as String);
+      });
+      final results = await Future.wait(resultsFutures);
+      completer.complete(results);
+    });
+    // need to append on mobile safari
+    document.body.append(input);
+    // input.click(); can be here
+
+    // String image = completer.
+
+    final List<String> images = await completer.future;
+    String imageBase64 = images[0];
+    // _imageBytesDecoded = base64Decode(imageBase64);
+
+    // uploadedImage = base64Decode(imageBase64);
+    // _imageBytesDecoded = base64.decode(imageBase64);
+    print(_imageBytesDecoded);
+    setState(() {
+      print(images);
+      // _uploadedImages = images;
+    });
+    _con.imageUploadApi(imageBase64);
+    input.remove();
   }
 
-  Image pickedImage;
+  // Uint8List uploadedImage;
+  // File uploadedImage;
+  Uint8List _imageBytesDecoded;
 
+    // Image _imageWidget;
+
+
+  // Image Uint8List;
+  // Image pickedImage1;
 
 
 }

@@ -406,10 +406,10 @@ class S {
   }
 
   /// 'register user'
-  String get register_user {
+  String get apply_for_restaurant {
     return Intl.message(
-      'Register User',
-      name: 'register_user',
+      'Apply for Restaurant',
+      name: 'apply_for_restaurant',
       desc: '',
       args: [],
     );

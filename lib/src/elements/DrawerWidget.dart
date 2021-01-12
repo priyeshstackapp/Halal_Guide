@@ -125,22 +125,22 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
-          // userRepo.currentUser.value.id != null ?
+          userRepo.currentUser.value.id != null ?
           ListTile(
             onTap: () {
-              // Navigator.of(context).pushNamed('/Pages', arguments: 5);
               Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegFirstWidget()));
+              // Navigator.of(context).pushNamed('/Pages', arguments: 5);
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegFirstWidget()));
             },
             leading: Icon(
               Icons.app_registration,
               color: Theme.of(context).focusColor.withOpacity(1),
             ),
             title: Text(
-              S.of(context).register_user,
+              S.of(context).apply_for_restaurant,
               style: Theme.of(context).textTheme.subtitle1,
             ),
-          ) ,
-              // : Container(),
+          ) : Container(),
 
           //------------------
 

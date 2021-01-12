@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/models/cuisine_response_model.dart';
-import 'package:food_delivery_app/src/models/register__restaurant_image_model.dart';
 import 'package:food_delivery_app/src/models/register_restaurant_model.dart';
+import 'package:food_delivery_app/src/models/restaurants_img_upload_model.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:google_map_location_picker/generated/l10n.dart';
 import 'package:http/http.dart' as http;
@@ -215,6 +215,34 @@ Future<String> uploadImageCallBack(file) async {
 }
 
 
+Future<RestaurantsImageUploadModel> restaurantImageUploadApi(Map<String, dynamic> finalMap) async {
+
+  final String url = '${GlobalConfiguration().getString('api_base_url')}upload/image?api_token=${userRepo.currentUser.value.apiToken}';
+  print(url);
+
+  final client = new http.Client();
+
+  try {
+    final response = await client.post(
+      url,
+      // headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      body: finalMap,
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return RestaurantsImageUploadModel.fromJson(json.decode(response.body));
+      // return Review.fromJSON(json.decode(response.body)['data']);
+    } else {
+      print(CustomTrace(StackTrace.current, message: response.body).toString());
+      return RestaurantsImageUploadModel.fromJson({});
+    }
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return RestaurantsImageUploadModel.fromJson({});
+  }
+}
+
+
 Future<RegisterRestaurantsData> registerRestaurantPostApi(Map<String, dynamic> finalMap) async {
 
 /*  String imageUrl;
@@ -301,50 +329,32 @@ Future<CuisineApi> cuisineUserOwnerShipPostApi(Map<String, dynamic> finalMap) as
 
 
 
-Future<RegisterRestaurantImageModel> restaurantImageUploadApi(Map<String, dynamic> finalMap, File file ) async {
+/*Future<RestaurantsImageUploadModel> restaurantImageUploadApi(Map<String, dynamic> finalMap) async {
 
   final String url = '${GlobalConfiguration().getString('api_base_url')}upload/image?api_token=${userRepo.currentUser.value.apiToken}';
   print(url);
 
   final client = new http.Client();
 
-  FormData formData = new FormData.fromMap(finalMap);
-
-  if (file != null) {
-    String fileNm = file.path.substring(
-        file.path.lastIndexOf("/") + 1,
-        file.path.length);
-
-    formData.files.add(
-      MapEntry(
-        "file",
-        MultipartFile.fromFileSync(file.path,
-            filename: fileNm),
-      ),
-    );
-  } else {
-print("wrong");
-  }
-
   try {
     final response = await client.post(
       url,
       // headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-      body: formData,
+      body: finalMap,
     );
     if (response.statusCode == 200) {
       print(response.body);
-      return RegisterRestaurantImageModel.fromJson(json.decode(response.body));
+      return RestaurantsImageUploadModel.fromJson(json.decode(response.body));
       // return Review.fromJSON(json.decode(response.body)['data']);
     } else {
       print(CustomTrace(StackTrace.current, message: response.body).toString());
-      return RegisterRestaurantImageModel.fromJson({});
+      return RestaurantsImageUploadModel.fromJson({});
     }
   } catch (e) {
     print(CustomTrace(StackTrace.current, message: url).toString());
-    return RegisterRestaurantImageModel.fromJson({});
+    return RestaurantsImageUploadModel.fromJson({});
   }
-}
+}*/
 
 
 

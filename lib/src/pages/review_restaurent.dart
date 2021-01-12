@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:html';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +154,7 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                       onChanged: (text) {
                         _con.restaurantReview.review = text;
                       },
-                      maxLines: 2,
+                      maxLines: 1,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(12),
@@ -164,7 +167,7 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                     ),
 
                     SizedBox(height: 10),
-                    TextField(
+                    /*TextField(
                       onChanged: (text) {
                         _con.restaurantReview.review = text;
                       },
@@ -193,35 +196,38 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                             index == _con.images.length
                                 ? InkWell(
                                     onTap: () async {
-                                      await showDialogForImagePick(context, () async {
-                                        var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                                        if (image != null) {
-                                          _con.images.add(image);
-                                          _con.notifyListeners();
-                                          Navigator.pop(context);
-                                        }
-                                      }, () async {
-                                        var image = await ImagePicker.pickVideo(source: ImageSource.gallery);
-                                        if (image != null) {
-                                          _con.images.add(image);
-                                          _con.notifyListeners();
-                                          Navigator.pop(context);
-                                        }
-                                      },() async {
-                                        var image = await ImagePicker.pickImage(source: ImageSource.camera);
-                                        if (image != null) {
-                                          _con.images.add(image);
-                                          _con.notifyListeners();
-                                          Navigator.pop(context);
-                                        }
-                                      },() async {
-                                        var image = await ImagePicker.pickVideo(source: ImageSource.camera);
-                                        if (image != null) {
-                                          _con.images.add(image);
-                                          _con.notifyListeners();
-                                          Navigator.pop(context);
-                                        }
-                                      },);
+
+                                      _selectImage();
+
+                                      // await showDialogForImagePick(context, () async {
+                                      //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                                      //   if (image != null) {
+                                      //     _con.images.add(image);
+                                      //     _con.notifyListeners();
+                                      //     Navigator.pop(context);
+                                      //   }
+                                      // }, () async {
+                                      //   var image = await ImagePicker.pickVideo(source: ImageSource.gallery);
+                                      //   if (image != null) {
+                                      //     _con.images.add(image);
+                                      //     _con.notifyListeners();
+                                      //     Navigator.pop(context);
+                                      //   }
+                                      // },() async {
+                                      //   var image = await ImagePicker.pickImage(source: ImageSource.camera);
+                                      //   if (image != null) {
+                                      //     _con.images.add(image);
+                                      //     _con.notifyListeners();
+                                      //     Navigator.pop(context);
+                                      //   }
+                                      // },() async {
+                                      //   var image = await ImagePicker.pickVideo(source: ImageSource.camera);
+                                      //   if (image != null) {
+                                      //     _con.images.add(image);
+                                      //     _con.notifyListeners();
+                                      //     Navigator.pop(context);
+                                      //   }
+                                      // },);
                                     },
                                     child: Container(
                                       height: MediaQuery.of(context).size.width / 3,
@@ -252,7 +258,8 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                                     ),
                                   ),
                           ),
-                          SizedBox(height: 10),
+                    SizedBox(height: 10),*/
+
                     FlatButton.icon(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
                       onPressed: () {
@@ -279,9 +286,50 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
           ),
         ));
   }
+
+  Future<void> _selectImage() async {
+    final completer = Completer<List<String>>();
+    final InputElement input = document.createElement('input');
+    input
+      ..type = 'file'
+      ..multiple = false
+      ..accept = 'image/*';
+    input.click();
+    // onChange doesn't work on mobile safari
+    input.addEventListener('change', (e) async {
+      final List<File> files = input.files;
+
+      Iterable<Future<String>> resultsFutures = files.map((file) {
+        final reader = FileReader();
+        reader.readAsDataUrl(file);
+        reader.onError.listen((error) => completer.completeError(error));
+        return reader.onLoad.first.then((_) => reader.result as String);
+      });
+      final results = await Future.wait(resultsFutures);
+      completer.complete(results);
+    });
+    // need to append on mobile safari
+    document.body.append(input);
+    // input.click(); can be here
+
+    // String image = completer.
+
+    final List<String> images = await completer.future;
+    String imageBase64 = images[0];
+    // uploadedImage = base64Decode(imageBase64);
+    // _imageBytesDecoded = base64.decode(imageBase64);
+    // print(_imageBytesDecoded);
+    setState(() {
+      print(images);
+      // _uploadedImages = images;
+    });
+    // _con.imageUploadApi(imageBase64);
+    input.remove();
+  }
+
 }
 
-showDialogForImagePick(
+/*showDialogForImagePick(
     BuildContext context,
     VoidCallback galleryImage,
     VoidCallback galleryVideo,
@@ -336,4 +384,4 @@ showDialogForImagePick(
       );
     },
   );
-}
+}*/

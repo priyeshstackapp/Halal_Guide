@@ -29,9 +29,8 @@ class RestaurantRegUserController extends ControllerMVC {
 
   bool isOpen = false;
   GlobalKey<ScaffoldState> scaffoldKey;
-  String base64Image = "";
   String uploadedImageId = "";
-
+  String imageStr = "";
   RestaurantRegUserController() {
     scaffoldKey = new GlobalKey<ScaffoldState>();
   }
@@ -41,7 +40,8 @@ class RestaurantRegUserController extends ControllerMVC {
   //reg restaurant first screen
 
 
-  imageUploadApi (Uint8List uploadedImage, {File file}) {
+  imageUploadApi (String imageBase64) {
+  // imageUploadApi (Uint8List uploadedImage, {File file}) {
     String data = selectionsId.join(",");
     print(data);
     // Map<String, dynamic> imageData = {
@@ -49,15 +49,17 @@ class RestaurantRegUserController extends ControllerMVC {
     //   "file": uploadedImage,
     // };
 
-    Map<String, dynamic> map = new Map<String, dynamic>();
-    map['field'] = 'image';
-    // map['file'] = file;
+    Map<String, dynamic> imageMap = new Map<String, dynamic>();
+    imageMap['field'] = 'image';
+    imageMap['file'] = imageBase64;
 
-    print(map);
-    restaurantRepo.restaurantImageUploadApi(map, file).then((value) {
+    print(imageMap);
+    restaurantRepo.restaurantImageUploadApi(imageMap).then((value) {
       if (value != null && value.success == true) {
         print(value.message);
+
         uploadedImageId = value.data.image;
+        imageStr = value.data.media.url;
         setState((){});
         // int restaurantId = value.id;
         // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
@@ -117,9 +119,6 @@ class RestaurantRegUserController extends ControllerMVC {
   }
 
 
-
-
-
   //reg restaurant third screen
 
   //Display cuisines api
@@ -156,10 +155,19 @@ class RestaurantRegUserController extends ControllerMVC {
     restaurantRepo.cuisineUserOwnerShipPostApi(mapData).then((value) {
       if (value != null && value.success == true) {
         print(value.message);
+
+        // Navigator.of(scaffoldKey.currentContext).pushReplacementNamed('/Pages', arguments: 2);
+        Navigator.of(context).pushNamedAndRemoveUntil('/Pages', (Route<dynamic> route) => false);
+
         // int restaurantId = value.id;
         // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
       }
     });
   }
+
+
+
+
+
 
 }
