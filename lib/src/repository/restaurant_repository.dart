@@ -7,6 +7,7 @@ import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/models/cuisine_response_model.dart';
 import 'package:food_delivery_app/src/models/register_restaurant_model.dart';
 import 'package:food_delivery_app/src/models/restaurants_img_upload_model.dart';
+import 'package:food_delivery_app/src/models/review_imgupl_response_model.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:google_map_location_picker/generated/l10n.dart';
 import 'package:http/http.dart' as http;
@@ -159,15 +160,15 @@ Future<Stream<Review>> getRecentReviews() async {
 }
 
 Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dynamic> images) async {
+// Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dynamic> images) async {
+  // String imageUrl;
+  // if(images.isNotEmpty){
+  //   for(int i = 0; i<images.length;i++){
+  //     imageUrl = await uploadImageCallBack(images[i]);
+  //   }
+  // }
 
-  String imageUrl;
-  if(images.isNotEmpty){
-    for(int i = 0; i<images.length;i++){
-      imageUrl = await uploadImageCallBack(images[i]);
-    }
-  }
-
-  review.media = imageUrl;
+  // review.media = imageUrl;
 
   final String url = '${GlobalConfiguration().getString('api_base_url')}restaurant_reviews';
   print(url);
@@ -178,6 +179,7 @@ Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dyn
       url,
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: json.encode(review.ofRestaurantToMap(restaurant)),
+      // body: json.encode(review.ofRestaurantToMap(restaurant)),
     );
     if (response.statusCode == 200) {
       print(response.body);
@@ -228,6 +230,7 @@ Future<RestaurantsImageUploadModel> restaurantImageUploadApi(Map<String, dynamic
       // headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: finalMap,
     );
+
     if (response.statusCode == 200) {
       print(response.body);
       return RestaurantsImageUploadModel.fromJson(json.decode(response.body));
@@ -329,9 +332,9 @@ Future<CuisineApi> cuisineUserOwnerShipPostApi(Map<String, dynamic> finalMap) as
 
 
 
-/*Future<RestaurantsImageUploadModel> restaurantImageUploadApi(Map<String, dynamic> finalMap) async {
+Future<ReviewImageUploadingData> reviewImageUploadApi(Map<String, dynamic> finalMap) async {
 
-  final String url = '${GlobalConfiguration().getString('api_base_url')}upload/image?api_token=${userRepo.currentUser.value.apiToken}';
+  final String url = '${GlobalConfiguration().getString('api_base_url')}review-upload?api_token=${userRepo.currentUser.value.apiToken}';
   print(url);
 
   final client = new http.Client();
@@ -344,17 +347,17 @@ Future<CuisineApi> cuisineUserOwnerShipPostApi(Map<String, dynamic> finalMap) as
     );
     if (response.statusCode == 200) {
       print(response.body);
-      return RestaurantsImageUploadModel.fromJson(json.decode(response.body));
+      return ReviewImageUploadingData.fromJson(json.decode(response.body));
       // return Review.fromJSON(json.decode(response.body)['data']);
     } else {
       print(CustomTrace(StackTrace.current, message: response.body).toString());
-      return RestaurantsImageUploadModel.fromJson({});
+      return ReviewImageUploadingData.fromJson({});
     }
   } catch (e) {
     print(CustomTrace(StackTrace.current, message: url).toString());
-    return RestaurantsImageUploadModel.fromJson({});
+    return ReviewImageUploadingData.fromJson({});
   }
-}*/
+}
 
 
 

@@ -37,7 +37,12 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Apply for restaurant"),
+        // title: Text("Apply for restaurant"),
+        backgroundColor: Theme.of(context).accentColor,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
       ),
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
@@ -108,167 +113,128 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
                       SizedBox(height: 30),
 
                       _con.isOpen ? Container() :  Column(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // singleRowData("Sunday", "1"),
+                          Text("Sunday"),
+                          SizedBox(height: 5),
+
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Sunday"),
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("1.0"),
-                                    Text("Close"),
-                                    startTimeShow("1.1")
-                                  ],
-                                )
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("1.0"),
+                                  _con.sundayOpen == null || _con.sundayOpen['index'] == "0" ? closeTextShow() : startTimeShow("1.1")
+                                ],
+                              )
                           ),
+
                           SizedBox(height: 30),
 
                           // singleRowData("Monday", "2"),
+                          Text("Monday"),
+                          SizedBox(height: 5),
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Monday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("2.0"),
-                                    Text("Close"),
-                                    startTimeShow("2.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("2.0"),
+                                  _con.mondayOpen == null || _con.mondayOpen['index'] == "0" ?  closeTextShow() : startTimeShow("2.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
 
                           // singleRowData("Tuesday", "3"),
+                          Text("Tuesday"),
+                          SizedBox(height: 5),
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Tuesday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("3.0"),
-                                    Text("Close"),
-                                    startTimeShow("3.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child:   Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("3.0"),
+                                  _con.tuesdayOpen == null || _con.tuesdayOpen['index'] == "0" ? closeTextShow() :  startTimeShow("3.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
 
                           // singleRowData("Wednesday", "4"),
+                          Text("Wednesday"),
+                          SizedBox(height: 5),
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Wednesday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("4.0"),
-                                    Text("Close"),
-                                    startTimeShow("4.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("4.0"),
+                                  _con.wednesdayOpen == null || _con.wednesdayOpen['index'] == "0" ? closeTextShow() : startTimeShow("4.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
 
                           // singleRowData("Thursday", "5"),
+                          Text("Thursday"),
+                          SizedBox(height: 5),
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Thursday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("5.0"),
-                                    Text("Close"),
-                                    startTimeShow("5.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("5.0"),
+                                  _con.thursdayOpen == null || _con.thursdayOpen['index'] == "0" ? closeTextShow() : startTimeShow("5.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
 
                           // singleRowData("Friday", "6"),
+                          Text("Friday"),
+                          SizedBox(height: 5),
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Friday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("6.0"),
-                                    Text("Close"),
-                                    startTimeShow("6.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child:Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("6.0"),
+                                  _con.fridayOpen == null || _con.fridayOpen['index'] == "0" ? closeTextShow() : startTimeShow("6.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
 
                           // singleRowData("Saturday", "7"),
+                          Text("Saturday"),
+                          SizedBox(height: 5),
+
                           Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Saturday"),
-
-                                Row(
-                                  children: [
-                                    Text("open"),
-                                    startTimeShow("7.0"),
-                                    Text("Close"),
-                                    startTimeShow("7.1")
-                                  ],
-                                )
-
-                              ],
-                            ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  startTimeShow("7.0"),
+                                  _con.saturdayOpen == null || _con.saturdayOpen['index'] == "0" ? closeTextShow() : startTimeShow("7.1")
+                                ],
+                              )
                           ),
                           SizedBox(height: 30),
-
-
                         ],
                       ),
 
@@ -341,23 +307,27 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
   startTimeShow(String timeShow) {
     return Container(
       height: 50,
-      width: 150,
-      margin: EdgeInsets.only(left: 10, right: 10),
+      width: MediaQuery.of(context).size.width / 3.0,
+      margin: EdgeInsets.only(left: 0, right: 10),
       padding: EdgeInsets.only(left: 5, right: 5),
 
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1),
-        borderRadius: BorderRadius.circular(10)
+          border: Border.all(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(10)
       ),
       child: DropdownButtonHideUnderline(
         child: new DropdownButton<Map>(
           items: timeSlot.map((Map value) {
             return new DropdownMenuItem<Map>(
               value: valueData(value,timeShow) ,
-              child: new Text(value['time']),
+              // child: Text(value['time']),
+              child: Text(showTimeList(value, timeShow)),
             );
           }).toList(),
-          hint: Text("Select time"),
+          hint: Text(
+              timeShow == "1.0" || timeShow == "2.0" || timeShow == "3.0" || timeShow == "4.0" || timeShow == "5.0" || timeShow == "6.0" || timeShow == "7.0"
+                  ? "Open Time" : "Close Time",
+              style: TextStyle(fontSize: 13, color: Theme.of(context).focusColor)),
           // value:  _con.sundayOpen,
           value:  showMenuData(timeShow),
           onChanged: (value) {
@@ -412,7 +382,7 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
             } else  if(timeShow == "7.0") {
               _con.saturdayOpen = value;
               setState(() { });
-                // saturdayOpen = value["index"];
+              // saturdayOpen = value["index"];
             } else if(timeShow == "7.1") {
               _con.saturdayClose = value;
               setState(() {});
@@ -557,4 +527,99 @@ class _RestaurantRegSecondPageState extends StateMVC<RestaurantRegSecondPage> {
       return _con.saturdayClose;
     }
   }
+
+  String showTimeList(Map<dynamic, dynamic> value, String timeShow) {
+
+    // return value['time'].toString();
+
+    if(timeShow == "1.0") {
+      return value['time'].toString();
+      // return data;
+    } else if(timeShow == "1.1"){
+      // return  data;
+      if(_con.sundayOpen != null &&_con.sundayOpen ['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+      // return _con.sundayClose;
+    } else  if(timeShow == "2.0"){
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "2.1"){
+      // return  data;
+      if(_con.mondayOpen != null && _con.mondayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }    } else  if(timeShow == "3.0"){
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "3.1"){
+      // return  data;
+      if(_con.tuesdayOpen != null && _con.tuesdayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+    } else  if(timeShow == "4.0"){
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "4.1") {
+      // return  data;
+      if(_con.wednesdayOpen != null && _con.wednesdayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+    } else  if(timeShow == "5.0") {
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "5.1") {
+      // return  data;
+      if(_con.thursdayOpen != null && _con.thursdayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+    } else  if(timeShow == "6.0") {
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "6.1"){
+      // return  data;
+      if(_con.fridayOpen != null && _con.fridayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+    } else  if(timeShow == "7.0"){
+      // return  data;
+      return value['time'].toString();
+    } else if(timeShow == "7.1") {
+      // return  data;
+      if(_con.saturdayOpen != null &&_con.saturdayOpen['index'] == "0") {
+        return "";
+      } else {
+        return value['time'].toString();
+      }
+    } else {
+      return value['time'].toString();
+    }
+
+  }
+
+  closeTextShow() {
+    return Container(height: 50,
+      width: MediaQuery.of(context).size.width / 3.0,
+      margin: EdgeInsets.only(left: 0, right: 10),
+      padding: EdgeInsets.only(left: 5, right: 5),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(10)
+      ),
+      child: Text('CLose', style: TextStyle(fontSize: 15, color: Theme.of(context).focusColor)),
+    );
+  }
+
 }

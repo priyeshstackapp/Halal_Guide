@@ -46,7 +46,11 @@ class PagesWidget extends StatefulWidget {
 class _PagesWidgetState extends State<PagesWidget> {
   initState() {
     super.initState();
-    _selectTab(widget.currentTab);
+
+    Future.delayed(const Duration(seconds: 1), () {
+      _selectTab(widget.currentTab);
+    });
+
   }
 
   @override

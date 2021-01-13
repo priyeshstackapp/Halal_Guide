@@ -846,6 +846,15 @@ class S {
     );
   }
 
+  String get should_be_more_than_10_letters {
+    return Intl.message(
+      'Should be more than 10 letters',
+      name: 'should_be_more_than_10_letters',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `John Doe`
   String get john_doe {
     return Intl.message(
@@ -1628,7 +1637,7 @@ class S {
 
   String get enter_YouTube_Vimeo_Link {
     return Intl.message(
-      'Enter YouTube Vimeo Link',
+      'Enter YouTube/Vimeo Link(Optional)',
       name: 'enter_youTube_vimeo_link',
       desc: '',
       args: [],

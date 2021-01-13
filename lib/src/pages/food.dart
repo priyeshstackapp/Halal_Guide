@@ -53,7 +53,7 @@ class _FoodWidgetState extends StateMVC<FoodWidget> {
                 fit: StackFit.expand,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(bottom: 125),
+                    margin: EdgeInsets.only(bottom:  Helper.canDelivery(_con.food.restaurant) && _con.food.deliverable ? 125 : 0),
                     padding: EdgeInsets.only(bottom: 15),
                     child: CustomScrollView(
                       primary: true,
@@ -314,7 +314,7 @@ class _FoodWidgetState extends StateMVC<FoodWidget> {
                             routeArgument: RouteArgument(param: '/Food', id: _con.food.id),
                           ),
                   ),
-                  Positioned(
+                  Helper.canDelivery(_con.food.restaurant) && _con.food.deliverable ? Positioned(
                     bottom: 0,
                     child: Container(
                       height: 150,
@@ -457,7 +457,7 @@ class _FoodWidgetState extends StateMVC<FoodWidget> {
                         ),
                       ),
                     ),
-                  )
+                  ) : Container()
                 ],
               ),
             ),

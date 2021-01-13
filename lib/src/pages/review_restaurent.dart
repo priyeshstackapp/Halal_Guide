@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:html';
-
+import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:food_delivery_app/src/controllers/reviews_controller.dart';
 import 'package:food_delivery_app/src/elements/CircularLoadingWidget.dart';
-import 'package:food_delivery_app/src/models/media.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import '../../generated/l10n.dart';
@@ -26,6 +24,9 @@ class ReviewsRestaurantWidget extends StatefulWidget {
 }
 
 class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
+
+  File image;
+
   ReviewsController _con;
 
   _ReviewsWidgetState() : super(ReviewsController()) {
@@ -154,7 +155,7 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                       onChanged: (text) {
                         _con.restaurantReview.review = text;
                       },
-                      maxLines: 1,
+                      maxLines: 3,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(12),
@@ -167,11 +168,12 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                     ),
 
                     SizedBox(height: 10),
-                    /*TextField(
+                    TextField(
+                      controller: _con.youtubeVimeoLink,
                       onChanged: (text) {
-                        _con.restaurantReview.review = text;
+                        // _con.restaurantReview.review = text;
                       },
-                      maxLines: 2,
+                      maxLines: 1,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(12),
@@ -187,78 +189,82 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                     Text(S.of(context).add_media,
                         textAlign: TextAlign.center, style: Theme.of(context).textTheme.subtitle1),
                     GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, childAspectRatio: 1),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3, childAspectRatio: 1
+                            ),
                             shrinkWrap: true,
-                            itemCount: _con.images.length < 1 ? _con.images.length + 1 : 1,
-                            itemBuilder: (context, index) =>
-                            index == _con.images.length
-                                ? InkWell(
-                                    onTap: () async {
+                            itemCount: _con.imagesList.length >= 1 ? _con.imagesList.length + 1 : 1,
+                            itemBuilder: (context, index) {
+                              return index == _con.imagesList.length
+                                  ? InkWell(
+                                onTap: () async {
 
-                                      _selectImage();
+                                  source(context);
 
-                                      // await showDialogForImagePick(context, () async {
-                                      //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                                      //   if (image != null) {
-                                      //     _con.images.add(image);
-                                      //     _con.notifyListeners();
-                                      //     Navigator.pop(context);
-                                      //   }
-                                      // }, () async {
-                                      //   var image = await ImagePicker.pickVideo(source: ImageSource.gallery);
-                                      //   if (image != null) {
-                                      //     _con.images.add(image);
-                                      //     _con.notifyListeners();
-                                      //     Navigator.pop(context);
-                                      //   }
-                                      // },() async {
-                                      //   var image = await ImagePicker.pickImage(source: ImageSource.camera);
-                                      //   if (image != null) {
-                                      //     _con.images.add(image);
-                                      //     _con.notifyListeners();
-                                      //     Navigator.pop(context);
-                                      //   }
-                                      // },() async {
-                                      //   var image = await ImagePicker.pickVideo(source: ImageSource.camera);
-                                      //   if (image != null) {
-                                      //     _con.images.add(image);
-                                      //     _con.notifyListeners();
-                                      //     Navigator.pop(context);
-                                      //   }
-                                      // },);
-                                    },
-                                    child: Container(
-                                      height: MediaQuery.of(context).size.width / 3,
-                                      width: MediaQuery.of(context).size.width / 3,
-                                      margin: EdgeInsets.symmetric(horizontal: 5),
-                                      alignment: Alignment.center,
-                                      child: Icon(Icons.add),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey, width: 1),
-                                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                                      ),
-                                    ),
-                                  )
-                                : Container(
+                                  // await showDialogForImagePick(context, () async {
+                                  //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                                  //   if (image != null) {
+                                  //     _con.images.add(image);
+                                  //     _con.notifyListeners();
+                                  //     Navigator.pop(context);
+                                  //   }
+                                  // }, () async {
+                                  //   var image = await ImagePicker.pickVideo(source: ImageSource.gallery);
+                                  //   if (image != null) {
+                                  //     _con.images.add(image);
+                                  //     _con.notifyListeners();
+                                  //     Navigator.pop(context);
+                                  //   }
+                                  // },() async {
+                                  //   var image = await ImagePicker.pickImage(source: ImageSource.camera);
+                                  //   if (image != null) {
+                                  //     _con.images.add(image);
+                                  //     _con.notifyListeners();
+                                  //     Navigator.pop(context);
+                                  //   }
+                                  // },() async {
+                                  //   var image = await ImagePicker.pickVideo(source: ImageSource.camera);
+                                  //   if (image != null) {
+                                  //     _con.images.add(image);
+                                  //     _con.notifyListeners();
+                                  //     Navigator.pop(context);
+                                  //   }
+                                  // },);
+                                },
+                                child: Container(
+                                  height: MediaQuery.of(context).size.width / 3,
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  margin: EdgeInsets.symmetric(horizontal: 5, vertical: 7),
+                                  alignment: Alignment.center,
+                                  child: Icon(Icons.add),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 1),
+                                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                                  ),
+                                ),
+                              )
+                                  : Container(
+                                height: MediaQuery.of(context).size.width / 3,
+                                width: MediaQuery.of(context).size.width / 3,
+                                margin: EdgeInsets.symmetric(horizontal: 5,  vertical: 7),
+                                alignment: Alignment.center,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    _con.imagesList[index],
+                                    fit: BoxFit.cover,
                                     height: MediaQuery.of(context).size.width / 3,
                                     width: MediaQuery.of(context).size.width / 3,
-                                    margin: EdgeInsets.symmetric(horizontal: 5),
-                                    alignment: Alignment.center,
-                                    child: Image.file(
-                                      _con.images[index],
-                                      fit: BoxFit.cover,
-                                      height: MediaQuery.of(context).size.width / 3,
-                                      width: MediaQuery.of(context).size.width / 3,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey, width: 1),
-                                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                                    ),
                                   ),
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey, width: 1),
+                                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                                ),
+                              );
+                            }
                           ),
-                    SizedBox(height: 10),*/
+                    SizedBox(height: 10),
 
                     FlatButton.icon(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
@@ -287,45 +293,132 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
         ));
   }
 
-  Future<void> _selectImage() async {
-    final completer = Completer<List<String>>();
-    final InputElement input = document.createElement('input');
-    input
-      ..type = 'file'
-      ..multiple = false
-      ..accept = 'image/*';
-    input.click();
-    // onChange doesn't work on mobile safari
-    input.addEventListener('change', (e) async {
-      final List<File> files = input.files;
-
-      Iterable<Future<String>> resultsFutures = files.map((file) {
-        final reader = FileReader();
-        reader.readAsDataUrl(file);
-        reader.onError.listen((error) => completer.completeError(error));
-        return reader.onLoad.first.then((_) => reader.result as String);
-      });
-      final results = await Future.wait(resultsFutures);
-      completer.complete(results);
-    });
-    // need to append on mobile safari
-    document.body.append(input);
-    // input.click(); can be here
-
-    // String image = completer.
-
-    final List<String> images = await completer.future;
-    String imageBase64 = images[0];
-    // uploadedImage = base64Decode(imageBase64);
-    // _imageBytesDecoded = base64.decode(imageBase64);
-    // print(_imageBytesDecoded);
-    setState(() {
-      print(images);
-      // _uploadedImages = images;
-    });
-    // _con.imageUploadApi(imageBase64);
-    input.remove();
+  source(context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              "Select source",
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: <Widget>[
+              GestureDetector(
+                onTap: () async {
+                  var _image = await ImagePicker.pickImage(
+                      source: ImageSource.camera);
+                  if (_image != null) {
+                    image = _image;
+                    _con.imagesList.add(_image);
+                    // _con.imagesList.insert(1, _image);
+                    List<int> imageBytes = image.readAsBytesSync();
+                    String base64Image = base64Encode(imageBytes);
+                    print(base64Image);
+                    _con.imageUploadApi(base64Image);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.photo_camera,
+                        size: 28,
+                      ),
+                      Text(
+                        " Camera",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            decoration: TextDecoration.none),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  // loadAssets();
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  File _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                  if (_image != null) {
+                    image = _image;
+                    _con.imagesList.add(_image);
+                    // _con.imagesList.insert(1, _image);
+                    setState(() {});
+                    List<int> imageBytes = image.readAsBytesSync();
+                    String base64Image = base64Encode(imageBytes);
+                    print(base64Image);
+                    _con.imageUploadApi(base64Image);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.photo_library,
+                        size: 28,
+                      ),
+                      Text(
+                        " Gallery",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            decoration: TextDecoration.none),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
+
+  // Future<void> _selectImage() async {
+  //   final completer = Completer<List<String>>();
+  //   final InputElement input = document.createElement('input');
+  //   input
+  //     ..type = 'file'
+  //     ..multiple = false
+  //     ..accept = 'image/*';
+  //   input.click();
+  //   // onChange doesn't work on mobile safari
+  //   input.addEventListener('change', (e) async {
+  //     final List<File> files = input.files;
+  //
+  //     Iterable<Future<String>> resultsFutures = files.map((file) {
+  //       final reader = FileReader();
+  //       reader.readAsDataUrl(file);
+  //       reader.onError.listen((error) => completer.completeError(error));
+  //       return reader.onLoad.first.then((_) => reader.result as String);
+  //     });
+  //     final results = await Future.wait(resultsFutures);
+  //     completer.complete(results);
+  //   });
+  //   // need to append on mobile safari
+  //   document.body.append(input);
+  //   // input.click(); can be here
+  //
+  //   // String image = completer.
+  //
+  //   final List<String> images = await completer.future;
+  //   String imageBase64 = images[0];
+  //   // uploadedImage = base64Decode(imageBase64);
+  //   // _imageBytesDecoded = base64.decode(imageBase64);
+  //   // print(_imageBytesDecoded);
+  //   setState(() {
+  //     print(images);
+  //     // _uploadedImages = images;
+  //   });
+  //   // _con.imageUploadApi(imageBase64);
+  //   input.remove();
+  // }
 
 }
 

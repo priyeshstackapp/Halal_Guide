@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/helpers/helper.dart';
 import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_third.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
@@ -49,12 +50,18 @@ class RestaurantRegUserController extends ControllerMVC {
     //   "file": uploadedImage,
     // };
 
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
     Map<String, dynamic> imageMap = new Map<String, dynamic>();
     imageMap['field'] = 'image';
     imageMap['file'] = imageBase64;
 
     print(imageMap);
     restaurantRepo.restaurantImageUploadApi(imageMap).then((value) {
+
+      loader.remove();
+
       if (value != null && value.success == true) {
         print(value.message);
 
@@ -80,6 +87,9 @@ class RestaurantRegUserController extends ControllerMVC {
 
     finalMap.addAll(firstPageData);
 
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
     if(isOpen) {
       mapData = {
         "open_24x7" : "1"
@@ -102,13 +112,11 @@ class RestaurantRegUserController extends ControllerMVC {
         "saturday_end_hour": saturdayClose['index'],
       };
     }
-
     finalMap.addAll(mapData);
     print(finalMap);
-
     // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: 2)));
-
       restaurantRepo.registerRestaurantPostApi(finalMap).then((value) {
+        loader.remove();
         if(value != null && value.id != null) {
           print(value.id);
           int restaurantId = value.id;
@@ -134,7 +142,10 @@ class RestaurantRegUserController extends ControllerMVC {
   int restaurantId = 0;
 
   Future<void> displayCuisinesApi() async {
+    // OverlayEntry loader = Helper.overlayLoader(context);
+    // Overlay.of(context).insert(loader);
     final Stream<CuisineModel> stream = await restaurantRepo.getCuisineApi();
+    // loader.remove();
     stream.listen((CuisineModel _review) {
       setState(() => cuisineData.add(_review));
 
@@ -146,6 +157,8 @@ class RestaurantRegUserController extends ControllerMVC {
   Future<void> cuisineUserOwnerShipApi () {
     String data = selectionsId.join(",");
     print(data);
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
     Map<String, dynamic> mapData = {
       "restaurant_id": restaurantId,
       "cuisine_id": data,
@@ -153,6 +166,7 @@ class RestaurantRegUserController extends ControllerMVC {
     };
     print(mapData);
     restaurantRepo.cuisineUserOwnerShipPostApi(mapData).then((value) {
+      loader.remove();
       if (value != null && value.success == true) {
         print(value.message);
 
@@ -164,10 +178,5 @@ class RestaurantRegUserController extends ControllerMVC {
       }
     });
   }
-
-
-
-
-
 
 }

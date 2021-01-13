@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html' as html;
-import 'dart:html';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_image_picker/flutter_web_image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:food_delivery_app/src/controllers/restaurant_user_controller.dart';
+import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/pages/register_user/reg_restaurant_second.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../elements/CircularLoadingWidget.dart';
 import '../../helpers/app_config.dart' as config;
 import '../../../generated/l10n.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
@@ -34,16 +39,37 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
   TextEditingController deliveryFeeController = TextEditingController(text: "");
   TextEditingController deliveryRangeController = TextEditingController(text: "");
   TextEditingController defaultTexController = TextEditingController(text: "");
+  double lat  = 40.707091;
+  double long = -74.009900;
+
 
   String availableDropText = "Yes";
   String closeDropText = "Yes";
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
-  Image image;
+  File image;
 
+  //Maps data
+
+  CameraPosition cameraPosition;
+  Completer<GoogleMapController> mapController = Completer();
+  List<Marker> allMarkers = <Marker>[];
 
   RestaurantRegUserController _con;
   _RestaurantRegFirstWidgetState() : super(RestaurantRegUserController()) {
     _con = controller;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    cameraPosition = CameraPosition(
+        target: LatLng(40.707091,  -74.009900),
+        zoom: 15
+    );
+
+    setState(() {});
   }
   @override
   Widget build(BuildContext context) {
@@ -66,7 +92,12 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
         ],
       ),*/
       appBar: AppBar(
-        title: Text("Apply for restaurant"),
+        backgroundColor: Theme.of(context).accentColor,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+        // title: Text("Apply for restaurant"),
       /*  leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
           onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
@@ -138,11 +169,11 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                       SizedBox(height: 30),
                       defaultTex(),
                       SizedBox(height: 30),
-                      Text("Available For Delivery", style: TextStyle(color: Theme.of(context).accentColor)),
+                      Text("Available For Delivery", style: TextStyle(color: Theme.of(context).accentColor, fontWeight: FontWeight.w500)),
                       SizedBox(height: 10),
                       availableForDelivery(),
                       SizedBox(height: 30),
-                      Text("closed", style: TextStyle(color: Theme.of(context).accentColor)),
+                      Text("closed", style: TextStyle(color: Theme.of(context).accentColor, fontWeight: FontWeight.w500)),
                       SizedBox(height: 10),
                       closed(),
                       SizedBox(height: 30),
@@ -150,18 +181,34 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                       InkResponse(
                         onTap: () async {
                           print("hello");
+                          FocusScope.of(context).unfocus();
+                          source(context);
                           // getMultipleImageInfos();
                    /*       final _image = await FlutterWebImagePicker.getImage;
                           setState(() {
                             image = _image;
                           });*/
-                          _selectImage();
+                          // _selectImage();
                         },
-                        child: _con.imageStr != null && _con.imageStr.isNotEmpty ? Image(image: NetworkImage(_con.imageStr))  :
+                        child: image != null ? Container(
+                            alignment: Alignment.center,
+                            height: MediaQuery.of(context).size.width  - 100,
+                            width: MediaQuery.of(context).size.width - 100,
+                            // margin: EdgeInsets.only(right: MediaQuery.of(context).size.width / 1.5),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Theme.of(context).focusColor.withOpacity(0.2),
+                                    width: 1
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Image(image: FileImage(image))
+                            // child: Image(image: NetworkImage(_con.imageStr))
+                        )  :
 
                         Container(
-                          height: 200,
-                          width: 200,
+                          height: MediaQuery.of(context).size.width  - 100,
+                          width: MediaQuery.of(context).size.width - 100,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                              border: Border.all(width: 1, color: Colors.grey),
@@ -177,6 +224,13 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                         ),
                       ),
 
+                      SizedBox(height: 30),
+
+                      Container(
+                          height: MediaQuery.of(context).size.width - 60,
+                          width: MediaQuery.of(context).size.width,
+                        child: showGoogleMaps(),
+                      ),
                       /*  BlockButtonWidget(
                         text: Text(
                           S.of(context).register,
@@ -198,8 +252,8 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                                "name": nameController.text,
                                "description": descriptionController.text,
                                "address": addressController.text,
-                               "latitude": "21.235270",
-                               "longitude": "72.868731",
+                               "latitude": lat.toString(),
+                               "longitude": long.toString(),
                                "phone": phoneController.text,
                                "mobile": mobileController.text,
                                "information": infoController.text,
@@ -214,9 +268,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
                                "closed": closeDropText == "Yes" ? 1 : 0,
                                "image": _con.uploadedImageId
                              };
-                             Navigator.push(context, MaterialPageRoute(
-                                 builder: (context) =>
-                                     RestaurantRegSecondPage(firstPageData: sendMapData)));
+                             Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegSecondPage(firstPageData: sendMapData)));
 
                            } else {
                              _con.scaffoldKey?.currentState?.showSnackBar(
@@ -284,6 +336,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       controller: descriptionController,
       // onSaved: (input) => _con.user.email = input,
       validator: (input) => input.length < 3 ? S.of(context).should_be_more_than_3_letters : null,
+      maxLines: 4,
       decoration: InputDecoration(
         labelText: 'Description',
         // labelText: S.of(context).email,
@@ -304,7 +357,8 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       // obscureText: _con.hidePassword,
       controller: addressController,
       // onSaved: (input) => _con.user.password = input,
-      validator: (input) => input.length < 7 ? S.of(context).should_be_more_than_3_letters : null,
+      validator: (input) => input.length < 10 ? S.of(context).should_be_more_than_10_letters : null,
+      maxLines: 2,
       decoration: InputDecoration(
         labelText: 'Address',
         // labelText: S.of(context).password,
@@ -344,22 +398,27 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
   mobileTextFiled() {
     return TextFormField(
       controller: mobileController,
-    // obscureText: _con.hidePassword,
-    // onSaved: (input) => _con.user.password = input,
-    validator: (input) => input.length < 9 ? "Phone should be 10 digit" : null,
-    decoration: InputDecoration(
-      labelText: 'Mobile',
-      // labelText: S.of(context).password,
-      labelStyle: TextStyle(color: Theme.of(context).accentColor),
-      contentPadding: EdgeInsets.all(12),
-      hintText: '7894561230',
-      hintStyle: TextStyle(color: Theme.of(context).focusColor.withOpacity(0.7)),
-      // prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).accentColor),
-      border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.5))),
-      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
-    ),
-  );
+      // obscureText: _con.hidePassword,
+      // onSaved: (input) => _con.user.password = input,
+      validator: (input) => input.length < 9 ? "Phone should be 10 digit" : null,
+      inputFormatters: [
+        WhitelistingTextInputFormatter(RegExp("[0-9]")),
+        FilteringTextInputFormatter.digitsOnly
+      ],
+      decoration: InputDecoration(
+        labelText: 'Mobile',
+
+        // labelText: S.of(context).password,
+        labelStyle: TextStyle(color: Theme.of(context).accentColor),
+        contentPadding: EdgeInsets.all(12),
+        hintText: '7894561230',
+        hintStyle: TextStyle(color: Theme.of(context).focusColor.withOpacity(0.7)),
+        // prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).accentColor),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.5))),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
+      ),
+    );
   }
 
   infoTextFiled() {
@@ -368,6 +427,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       // obscureText: _con.hidePassword,
       // onSaved: (input) => _con.user.password = input,
       validator: (input) => input.length < 6 ? S.of(context).should_be_more_than_6_letters : null,
+      maxLines: 4,
       decoration: InputDecoration(
         labelText: 'Information',
         // labelText: S.of(context).password,
@@ -389,12 +449,16 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       // obscureText: _con.hidePassword,
       // onSaved: (input) => _con.user.password = input,
       validator: (input) => input.isEmpty ? "Delivery Fee Empty" : null,
+      inputFormatters: [
+        WhitelistingTextInputFormatter(RegExp("[0-9]"))
+      ],
       decoration: InputDecoration(
         labelText: 'Delivery Fee',
         // labelText: S.of(context).password,
         labelStyle: TextStyle(color: Theme.of(context).accentColor),
         contentPadding: EdgeInsets.all(12),
         hintText: '\$20',
+
         hintStyle: TextStyle(color: Theme.of(context).focusColor.withOpacity(0.7)),
         // prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).accentColor),
         border: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
@@ -410,6 +474,9 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       // obscureText: _con.hidePassword,
       // onSaved: (input) => _con.user.password = input,
       validator: (input) => input.isEmpty ? "Delivery Range Empty" : null,
+      inputFormatters: [
+        WhitelistingTextInputFormatter(RegExp("[0-9]"))
+      ],
       decoration: InputDecoration(
         labelText: 'Delivery Range',
         // labelText: S.of(context).password,
@@ -431,6 +498,9 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       // obscureText: _con.hidePassword,
       // onSaved: (input) => _con.user.password = input,
       validator: (input) => input.isEmpty ? "Default Tex Empty" : null,
+      inputFormatters: [
+        WhitelistingTextInputFormatter(RegExp("[0-9]"))
+      ],
       decoration: InputDecoration(
         labelText: 'Default Tax',
         // labelText: S.of(context).password,
@@ -450,8 +520,8 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
     return Container(
       padding: EdgeInsets.only(left: 15, right: 15),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).focusColor.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(10)
+          border: Border.all(color: Theme.of(context).focusColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(5)
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
@@ -482,7 +552,7 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
       padding: EdgeInsets.only(left: 15, right: 15),
       decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).focusColor.withOpacity(0.2), width: 1),
-          borderRadius: BorderRadius.circular(10)
+          borderRadius: BorderRadius.circular(5)
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
@@ -509,69 +579,176 @@ class _RestaurantRegFirstWidgetState extends StateMVC<RestaurantRegFirstWidget> 
 
   }
 
-
-/*  Future<void> getMultipleImageInfos() async {
-    Image fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
-
-    if (fromPicker != null) {
-      setState(() {
-        _imageWidget = fromPicker;
-      });
-    }
-    }*/
-
-
-  Future<void> _selectImage() async {
-    final completer = Completer<List<String>>();
-    final InputElement input = document.createElement('input');
-    input
-      ..type = 'file'
-      ..multiple = false
-      ..accept = 'image/*';
-    input.click();
-    // onChange doesn't work on mobile safari
-    input.addEventListener('change', (e) async {
-      final List<File> files = input.files;
-
-      Iterable<Future<String>> resultsFutures = files.map((file) {
-        final reader = FileReader();
-        reader.readAsDataUrl(file);
-        reader.onError.listen((error) => completer.completeError(error));
-        return reader.onLoad.first.then((_) => reader.result as String);
-      });
-      final results = await Future.wait(resultsFutures);
-      completer.complete(results);
-    });
-    // need to append on mobile safari
-    document.body.append(input);
-    // input.click(); can be here
-
-    // String image = completer.
-
-    final List<String> images = await completer.future;
-    String imageBase64 = images[0];
-    // _imageBytesDecoded = base64Decode(imageBase64);
-
-    // uploadedImage = base64Decode(imageBase64);
-    // _imageBytesDecoded = base64.decode(imageBase64);
-    print(_imageBytesDecoded);
-    setState(() {
-      print(images);
-      // _uploadedImages = images;
-    });
-    _con.imageUploadApi(imageBase64);
-    input.remove();
+  
+  showGoogleMaps() {
+    return cameraPosition == null
+        ? CircularLoadingWidget(height: 0)
+        : GoogleMap(
+      mapToolbarEnabled: false,
+      mapType: MapType.normal,
+      initialCameraPosition: cameraPosition,
+      markers: {
+        Marker(
+         markerId: MarkerId("1"),
+         position: LatLng(lat, long),
+        ),
+      },
+      // markers: Marker(markerId: 1),
+      // markers: Set.from(allMarkers),
+      onMapCreated: (GoogleMapController controller) {
+        mapController.complete(controller);
+      },
+      onCameraMove: (CameraPosition cameraPosition) {
+        cameraPosition = cameraPosition;
+      },
+      gestureRecognizers:
+      <Factory<OneSequenceGestureRecognizer>>[
+        Factory<OneSequenceGestureRecognizer>(
+              () => new EagerGestureRecognizer(),
+        ),
+      ].toSet(),
+      onTap: (value){
+        print(value);
+        lat = value.latitude;
+        long = value.longitude;
+        setState(() { });
+      },
+      onCameraIdle: () {
+        // _con.getRestaurantsOfArea();
+      },
+      // polylines: _con.polylines,
+    );
   }
 
-  // Uint8List uploadedImage;
-  // File uploadedImage;
-  Uint8List _imageBytesDecoded;
 
-    // Image _imageWidget;
+  // Future<void> _selectImage() async {
+  //   final completer = Completer<List<String>>();
+  //   final InputElement input = document.createElement('input');
+  //   input
+  //     ..type = 'file'
+  //     ..multiple = false
+  //     ..accept = 'image/*';
+  //   input.click();
+  //   // onChange doesn't work on mobile safari
+  //   input.addEventListener('change', (e) async {
+  //     final List<File> files = input.files;
+  //
+  //     Iterable<Future<String>> resultsFutures = files.map((file) {
+  //       final reader = FileReader();
+  //       reader.readAsDataUrl(file);
+  //       reader.onError.listen((error) => completer.completeError(error));
+  //       return reader.onLoad.first.then((_) => reader.result as String);
+  //     });
+  //     final results = await Future.wait(resultsFutures);
+  //     completer.complete(results);
+  //   });
+  //   // need to append on mobile safari
+  //   document.body.append(input);
+  //   // input.click(); can be here
+  //
+  //   // String image = completer.
+  //
+  //   final List<String> images = await completer.future;
+  //   String imageBase64 = images[0];
+  //   // _imageBytesDecoded = base64Decode(imageBase64);
+  //
+  //   // uploadedImage = base64Decode(imageBase64);
+  //   // _imageBytesDecoded = base64.decode(imageBase64);
+  //   print(_imageBytesDecoded);
+  //   setState(() {
+  //     print(images);
+  //     // _uploadedImages = images;
+  //   });
+  //   _con.imageUploadApi(imageBase64);
+  //   input.remove();
+  // }
 
+  source(context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              "Select source",
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: <Widget>[
+              GestureDetector(
+                onTap: () async {
+                  var _image = await ImagePicker.pickImage(
+                      source: ImageSource.camera);
+                  if (_image != null) {
+                    image = _image;
 
-  // Image Uint8List;
-  // Image pickedImage1;
+                    List<int> imageBytes = image.readAsBytesSync();
+                    String base64Image = base64Encode(imageBytes);
+                    print(base64Image);
+                    _con.imageUploadApi(base64Image);
 
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.photo_camera,
+                        size: 28,
+                      ),
+                      Text(
+                        " Camera",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            decoration: TextDecoration.none),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  // loadAssets();
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  File _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                  if (_image != null) {
+                    image = _image;
+                    setState(() {});
+
+                    List<int> imageBytes = image.readAsBytesSync();
+                    print(imageBytes);
+                    String base64Image = base64Encode(imageBytes);
+                    print(base64Image);
+                    _con.imageUploadApi(base64Image);
+
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.photo_library,
+                        size: 28,
+                      ),
+                      Text(
+                        " Gallery",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            decoration: TextDecoration.none),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
 
 }

@@ -48,7 +48,7 @@ class RouteGenerator {
       case '/ForgetPassword':
         return MaterialPageRoute(builder: (_) => ForgetPasswordWidget());
       case '/Pages':
-        return MaterialPageRoute(builder: (_) => PagesWidget(currentTab: args));
+        return MaterialPageRoute(builder: (_) => PagesWidget(currentTab: args, isSingle: false));
       case '/Details':
         return MaterialPageRoute(builder: (_) => DetailsWidget(routeArgument: args));
       case '/Menu':

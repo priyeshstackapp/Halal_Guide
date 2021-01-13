@@ -1,3 +1,7 @@
+// import 'dart:html';
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/models/restaurant.dart';
 import 'package:food_delivery_app/src/repository/restaurant_repository.dart';
@@ -20,12 +24,17 @@ class ReviewsController extends ControllerMVC {
   List<Food> foodsOfOrder = [];
   List<OrderStatus> orderStatus = <OrderStatus>[];
   GlobalKey<ScaffoldState> scaffoldKey;
-  List<dynamic> images;
+  List<File> imagesList = [];
+
+  String uploadedImageId = "";
+  String imageStr = "";
+  List<String> uploadImageList = List();
+  TextEditingController youtubeVimeoLink = TextEditingController();
 
   ReviewsController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
     this.restaurantReview = new Review.init("0");
-    this.images = List();
+    this.imagesList = List();
   }
 
   void listenForOrder({String orderId, String message}) async {
@@ -80,7 +89,24 @@ class ReviewsController extends ControllerMVC {
   }
 
   void addOnlyRestaurantReview(Review _review) async {
-    restaurantRepo.addRestaurantReview(_review, this.restaurant,this.images).then((value) {
+
+   /* Map<String, dynamic> mapData = {
+      "review":"",
+      "rate":"",
+      "user_id":"",
+      "restaurant_id":"",
+      "media":"",
+    };*/
+
+    if(youtubeVimeoLink.text != null && youtubeVimeoLink.text.trim().isNotEmpty) {
+      uploadImageList.add(youtubeVimeoLink.text);
+    }
+
+    String imagesStr = uploadImageList.join(",");
+
+    _review.media = imagesStr;
+
+    restaurantRepo.addRestaurantReview(_review, this.restaurant,this.imagesList).then((value) {
       Navigator.pop(context,"Yes");
       scaffoldKey?.currentState?.showSnackBar(SnackBar(
         content: Text(S.of(context).the_restaurant_has_been_rated_successfully),
@@ -98,7 +124,9 @@ class ReviewsController extends ControllerMVC {
   }
 
   void addRestaurantReview(Review _review) async {
-    restaurantRepo.addRestaurantReview(_review, this.order.foodOrders[0].food.restaurant,images).then((value) {
+
+
+    restaurantRepo.addRestaurantReview(_review, this.order.foodOrders[0].food.restaurant,imagesList).then((value) {
       refreshOrder();
       scaffoldKey?.currentState?.showSnackBar(SnackBar(
         content: Text(S.of(context).the_restaurant_has_been_rated_successfully),
@@ -120,23 +148,24 @@ class ReviewsController extends ControllerMVC {
 
 
   //image uploading
-  // imageUploadApi (String imageBase64) {
-  //   // imageUploadApi (Uint8List uploadedImage, {File file}) {
-  //
-  //   Map<String, dynamic> imageMap = {"file":imageBase64};
-  //
-  //   print(imageMap);
-  //   restaurantRepo.restaurantImageUploadApi(imageMap).then((value) {
-  //     if (value != null && value.success == true) {
-  //       print(value.message);
-  //
-  //       uploadedImageId = value.data.image;
-  //       setState((){});
-  //       // int restaurantId = value.id;
-  //       // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
-  //     } else {
-  //       print("Some thing wrong");
-  //     }
-  //   });
-  // }
+  imageUploadApi (String imageBase64) {
+    // imageUploadApi (Uint8List uploadedImage, {File file}) {
+
+    Map<String, dynamic> imageMap = {"file":imageBase64};
+
+    print(imageMap);
+    restaurantRepo.reviewImageUploadApi(imageMap).then((value) {
+      if (value != null && value.success == true) {
+        print(value.message);
+
+        // uploadedImageId = value.data.url;
+        uploadImageList.add(value.data.url);
+        setState((){});
+        // int restaurantId = value.id;
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
+      } else {
+        print("Some thing wrong");
+      }
+    });
+  }
 }

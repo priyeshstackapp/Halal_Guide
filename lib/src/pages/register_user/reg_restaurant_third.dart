@@ -38,7 +38,12 @@ class _RestaurantRegThirdPageState extends StateMVC<RestaurantRegThirdPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Apply for restaurant"),
+        backgroundColor: Theme.of(context).accentColor,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+        // title: Text("Apply for restaurant"),
       ),
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
