@@ -34,6 +34,36 @@ class App {
 //    int.parse(settingRepo.setting.mainColor.replaceAll("#", "0xFF"));
     return _widthPadding * v;
   }
+
+
+  //Stripe payment key
+  static String publicKey() {
+    return "Bearer pk_test_51I2Va0FWDFJAlIu6aS3Wb0r1q1LAEeRYHi86B3YH0dBG685AeMBegonROIn4pkegMH1j7XbX9QXQ2Vdvea64k41Y006FSV7Jsx";
+  }
+
+  static String secretKey() {
+    return "Bearer sk_test_51I2Va0FWDFJAlIu6oHYtovX6vG1GlrfCIA0gLvgmtgBgBCJi1duoZmcO5oXIrJTUlP8mfc6BhXdfFtTpEvCrASaH001Wi6qEts";
+  }
+
+  //facebook post key : -
+
+  static String userAccessToken() {
+    return "EAAGnZBvByjtUBAMgNdcGYXFH2amVEihEty6dZCJFxXrpQ7kvidvZCFzhQkxhAptoEq2KDfEj0cXWAmAq6fZAvSvznbwTmt10e0YD0FOrMTi6SS1jGGLu2jnp3smwbjBlpBTG1gozKRhlQmBZAxQDIAEVJsNvPpjSVZCfbtaDGoH91ASV2kAFtk";
+  }
+
+  static String pageAccessToken() {
+    return "EAAGnZBvByjtUBALGcr3KCueZCML02TVT2QZAHwsq5xAQZBzrIbJJnAGen32jctki3z12jz5hgeBYFTHnZCHqGL8uwhVYhkXohsactQonRwc46HaUyC29n4EGbuQxJOU0vIwyFrEUX0TJdo1W6soB1utoS0zu6zh7t25qxsALqGHl1fttJZA0LwigJrtbHoyfIZD";
+  }
+
+  static String userId() {
+    return "105274734884308";
+  }
+
+  static String pageId() {
+    return "102004228553987";
+  }
+
+
 }
 
 class Colors {

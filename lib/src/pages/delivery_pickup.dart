@@ -136,13 +136,14 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                           }
                         },
                         onLongPress: (Address _address) {
-                          DeliveryAddressDialog(
-                            context: context,
-                            address: _address,
-                            onChanged: (Address _address) {
-                              _con.updateAddress(_address);
-                            },
-                          );
+                          _con.toggleDelivery();
+                          // DeliveryAddressDialog(
+                          //   context: context,
+                          //   address: _address,
+                          //   onChanged: (Address _address) {
+                          //     _con.updateAddress(_address);
+                          //   },
+                          // );
                         },
                       )
                     : NotDeliverableAddressesItemWidget()

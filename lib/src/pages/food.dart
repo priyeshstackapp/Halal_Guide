@@ -314,7 +314,8 @@ class _FoodWidgetState extends StateMVC<FoodWidget> {
                             routeArgument: RouteArgument(param: '/Food', id: _con.food.id),
                           ),
                   ),
-                  Helper.canDelivery(_con.food.restaurant) && _con.food.deliverable ? Positioned(
+                  // Helper.canDelivery(_con.food.restaurant) && _con.food.deliverable ?
+                  Positioned(
                     bottom: 0,
                     child: Container(
                       height: 150,
@@ -457,7 +458,8 @@ class _FoodWidgetState extends StateMVC<FoodWidget> {
                         ),
                       ),
                     ),
-                  ) : Container()
+                  )
+                      // : Container()
                 ],
               ),
             ),

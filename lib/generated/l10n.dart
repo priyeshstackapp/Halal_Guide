@@ -1475,6 +1475,7 @@ class S {
     );
   }
 
+
   /// `New Address added successfully`
   String get new_address_added_successfully {
     return Intl.message(

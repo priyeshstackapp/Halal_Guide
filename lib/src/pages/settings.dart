@@ -200,6 +200,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                               height: 25.0,
                               child: PaymentSettingsDialog(
                                 creditCard: _con.creditCard,
+                                isEdit: false,
                                 onChanged: () {
                                   _con.updateCreditCard(_con.creditCard);
                                   //setState(() {});

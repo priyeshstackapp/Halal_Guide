@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/elements/PaymentSettingsDialog.dart';
+import 'package:food_delivery_app/src/models/credit_card.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
-
 import '../../generated/l10n.dart';
 import '../controllers/checkout_controller.dart';
 import '../elements/CircularLoadingWidget.dart';
@@ -17,14 +18,20 @@ class CheckoutWidget extends StatefulWidget {
 }
 
 class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
+
+  CreditCard creditCard;
+  List<CreditCard> creditCardList = List();
   CheckoutController _con;
 
   _CheckoutWidgetState() : super(CheckoutController()) {
     _con = controller;
   }
+
   @override
   void initState() {
     _con.listenForCarts();
+    _con.customerGetApi();
+
     super.initState();
   }
 
@@ -76,11 +83,25 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                           ),
                         ),
                         SizedBox(height: 20),
-                        new CreditCardsWidget(
+
+                        PaymentSettingsDialog(
+                          creditCard: _con.creditCard,
+                          isEdit: false,
+                          onChanged: () {
+                            _con.updateCreditCard(_con.creditCard);
+                            creditCardList.add(_con.creditCard);
+                            //setState(() {});
+                          },
+                        ),
+
+                        SizedBox(height: 20),
+                        CreditCardsWidget(
                             creditCard: _con.creditCard,
+                            creditCardList: creditCardList,
                             onChanged: (creditCard) {
                               _con.updateCreditCard(creditCard);
                             }),
+                        // creditCardShow(),
                         SizedBox(height: 40),
                         setting.value.payPalEnabled
                             ? Text(
@@ -115,6 +136,7 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                     ),
                   ),
                 ),
+                //bottom view show
                 Positioned(
                   bottom: 0,
                   child: Container(
@@ -182,13 +204,16 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                             width: MediaQuery.of(context).size.width - 40,
                             child: FlatButton(
                               onPressed: () {
-                                if (_con.creditCard.validated()) {
+
+                                // _con.stripAddPaymentApi();
+
+                            /*    if (_con.creditCard.validated()) {
                                   Navigator.of(context).pushNamed('/OrderSuccess', arguments: new RouteArgument(param: 'Credit Card (Stripe Gateway)'));
                                 } else {
                                   _con.scaffoldKey?.currentState?.showSnackBar(SnackBar(
                                     content: Text(S.of(context).your_credit_card_not_valid),
                                   ));
-                                }
+                                }*/
                               },
                               padding: EdgeInsets.symmetric(vertical: 14),
                               color: Theme.of(context).accentColor,
@@ -210,4 +235,113 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
             ),
     );
   }
+
+
+  // creditCardShow() {
+  //   return Stack(
+  //     alignment: AlignmentDirectional.topCenter,
+  //     children: <Widget>[
+  //       Container(
+  //         width: 259,
+  //         height: 165,
+  //         decoration: BoxDecoration(
+  //           color: Theme.of(context).primaryColor.withOpacity(0.8),
+  //           borderRadius: BorderRadius.circular(10),
+  //           boxShadow: [
+  //             BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.15), blurRadius: 20, offset: Offset(0, 5)),
+  //           ],
+  //         ),
+  //       ),
+  //       Container(
+  //         margin: EdgeInsets.only(top: 12),
+  //         width: 275,
+  //         height: 177,
+  //         decoration: BoxDecoration(
+  //           color: Theme.of(context).primaryColor.withOpacity(0.8),
+  //           borderRadius: BorderRadius.circular(10),
+  //           boxShadow: [
+  //             BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.15), blurRadius: 20, offset: Offset(0, 5)),
+  //           ],
+  //         ),
+  //       ),
+  //       Container(
+  //         margin: EdgeInsets.only(top: 25),
+  //         width: 300,
+  //         height: 195,
+  //         decoration: BoxDecoration(
+  //           color: Theme.of(context).primaryColor,
+  //           borderRadius: BorderRadius.circular(10),
+  //           boxShadow: [
+  //             BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.15), blurRadius: 20, offset: Offset(0, 5)),
+  //           ],
+  //         ),
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 21),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: <Widget>[
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: <Widget>[
+  //                   Image.asset(
+  //                     'assets/img/visa.png',
+  //                     height: 22,
+  //                     width: 70,
+  //                   ),
+  //                   ButtonTheme(
+  //                     padding: EdgeInsets.all(0),
+  //                     minWidth: 50.0,
+  //                     height: 10.0,
+  //                     child: PaymentSettingsDialog(
+  //                       creditCard: creditCard,
+  //                       onChanged: () {
+  //                         _con.updateCreditCard(creditCard);
+  //                         setState(() {});
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               Text(
+  //                 S.of(context).card_number,
+  //                 style: Theme.of(context).textTheme.caption,
+  //               ),
+  //               Text(
+  //                 Helper.getCreditCardNumber(creditCard.number),
+  //                 style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(letterSpacing: 1.4)),
+  //               ),
+  //               SizedBox(height: 15),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: <Widget>[
+  //                   Text(
+  //                     S.of(context).expiry_date,
+  //                     style: Theme.of(context).textTheme.caption,
+  //                   ),
+  //                   Text(
+  //                     S.of(context).cvv,
+  //                     style: Theme.of(context).textTheme.caption,
+  //                   ),
+  //                 ],
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: <Widget>[
+  //                   Text(
+  //                     '${creditCard.expMonth}/${creditCard.expYear}',
+  //                     style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(letterSpacing: 1.4)),
+  //                   ),
+  //                   Text(
+  //                     creditCard.cvc,
+  //                     style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(letterSpacing: 1.4)),
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
