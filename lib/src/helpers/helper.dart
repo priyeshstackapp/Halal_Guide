@@ -272,6 +272,24 @@ class Helper {
     });
   }
 
+  static onLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static String limitString(String text, {int limit = 24, String hiddenText = "..."}) {
     return text.substring(0, min<int>(limit, text.length)) + (text.length > limit ? hiddenText : '');
   }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_delivery_app/src/helpers/app_config.dart';
 import 'package:food_delivery_app/src/models/cuisine_model.dart';
 import 'package:food_delivery_app/src/models/cuisine_response_model.dart';
 import 'package:food_delivery_app/src/models/register_restaurant_model.dart';
@@ -159,7 +160,7 @@ Future<Stream<Review>> getRecentReviews() async {
   }
 }
 
-Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dynamic> images) async {
+Future<Review> addRestaurantReview(Review review, Restaurant restaurant) async {
 // Future<Review> addRestaurantReview(Review review, Restaurant restaurant,List<dynamic> images) async {
   // String imageUrl;
   // if(images.isNotEmpty){
@@ -359,6 +360,86 @@ Future<ReviewImageUploadingData> reviewImageUploadApi(Map<String, dynamic> final
   }
 }
 
+//facebook data post api
+
+Future<http.Response> getUserAccessToken() async {
+
+  final String url = '${GlobalConfiguration().getString('facebook_url')}me?fields=id%2Cname&access_token=${App.userAccessToken()}';
+  print(url);
+  http.Response response;
+  try {
+    response = await http.get(url);
+    return response;
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return null;
+  }
+}
+
+Future<http.Response> getPageDetails() async {
+
+  final String url = '${GlobalConfiguration().getString('facebook_url')}${App.userId()}/accounts?access_token=${App.pageAccessToken()}';
+  print(url);
+  http.Response response;
+  try {
+    response = await http.get(url);
+    return response;
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return null;
+  }
+}
+
+
+Future<http.Response> postMessage(String message, String urlLink) async {
+
+  String url = "";
+  if(urlLink != null && urlLink.isNotEmpty) {
+    url = '${GlobalConfiguration().getString('facebook_url')}${App.pageId()}/feed?message=$message&link=$urlLink&access_token=${App.pageAccessToken()}';
+  } else {
+    url = '${GlobalConfiguration().getString('facebook_url')}${App.pageId()}/feed?message=$message&access_token=${App.pageAccessToken()}';
+  }
+
+  print(url);
+  http.Response response;
+  try {
+    response = await http.post(url);
+    return response;
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return null;
+  }
+}
+
+Future<http.Response> postMediaLink(String message, String imageLink) async {
+
+  String url = '${GlobalConfiguration().getString('facebook_url')}${App.pageId()}/photos?url=$imageLink&access_token=${App.pageAccessToken()}';
+
+  print(url);
+  http.Response response;
+  try {
+    response = await http.post(url);
+    return response;
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return null;
+  }
+}
+
+Future<http.Response> postUpdateMedia(String message, String postId) async {
+
+  String url = '${GlobalConfiguration().getString('facebook_url')}$postId?message=$message&access_token=${App.pageAccessToken()}';
+
+  print(url);
+  http.Response response;
+  try {
+    response = await http.post(url);
+    return response;
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: url).toString());
+    return null;
+  }
+}
 
 
 
