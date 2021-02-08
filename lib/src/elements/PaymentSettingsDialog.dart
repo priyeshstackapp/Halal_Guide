@@ -29,6 +29,19 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(!widget.isEdit) {
+      widget.creditCard.number = "";
+      widget.creditCard.expMonth = "";
+      widget.creditCard.expYear = "";
+      widget.creditCard.cvc = "";
+      setState(() { });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FlatButton(
       onPressed: () async {
@@ -58,7 +71,7 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
                             new TextFormField(
                               style: TextStyle(color: Theme.of(context).hintColor),
                               keyboardType: TextInputType.number,
-                              controller: crNumber,
+                              // controller: crNumber,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(16),
@@ -93,7 +106,7 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
                             new TextFormField(
                               style: TextStyle(color: Theme.of(context).hintColor),
                               keyboardType: TextInputType.number,
-                              controller: crCvc,
+                              // controller: crCvc,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 new LengthLimitingTextInputFormatter(3),
@@ -116,6 +129,7 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
                               value: _con.isRemember,
                               onChanged: (bool newValue) {
                                 setState(() {
+                                  // widget.creditCard.isRemember = true;
                                   _con.isRemember = newValue;
                                 });
                               },
@@ -178,9 +192,7 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
     return new InputDecoration(
       hintText: hintText,
       labelText: labelText,
-      hintStyle: Theme.of(context).textTheme.bodyText2.merge(
-            TextStyle(color: Theme.of(context).focusColor)
-          ),
+      hintStyle: Theme.of(context).textTheme.bodyText2.merge(TextStyle(color: Theme.of(context).focusColor)),
       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
       focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor)),
       floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -199,8 +211,8 @@ class _PaymentSettingsDialogState extends StateMVC<PaymentSettingsDialog> {
       _con.creditCard.cvc = crCvc.text;
       _con.stripAddPaymentApi();
 
-      // _paymentSettingsFormKey.currentState.save();
-      // widget.onChanged();
+      _paymentSettingsFormKey.currentState.save();
+      widget.onChanged();
       Navigator.pop(context, true);
     }
   }

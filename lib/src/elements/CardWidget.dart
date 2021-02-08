@@ -73,8 +73,7 @@ class CardWidget extends StatelessWidget {
                             style: Theme.of(context).textTheme.caption.merge(TextStyle(color: Theme.of(context).primaryColor)),
                           ),
                   ),
-                  !restaurant.closed
-                      ? Container(
+                  !restaurant.closed ? Container(
                     margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                     decoration: BoxDecoration(color: Helper.canDelivery(restaurant) ? Colors.green : Colors.orange, borderRadius: BorderRadius.circular(24)),
@@ -108,12 +107,14 @@ class CardWidget extends StatelessWidget {
                         restaurant.name,
                         overflow: TextOverflow.fade,
                         softWrap: false,
+                        maxLines: 1,
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
                       Text(
                         Helper.skipHtml(restaurant.description),
                         overflow: TextOverflow.fade,
                         softWrap: false,
+                        maxLines: 2,
                         style: Theme.of(context).textTheme.caption,
                       ),
                       SizedBox(height: 5),
@@ -124,18 +125,12 @@ class CardWidget extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Row(
-                            children: Helper.getStarsList(double.parse(restaurant.rate)),
-                          ),
-                          SizedBox(width: 10,),
+                          Row(children: Helper.getStarsList(double.parse(restaurant.rate))),
+                          SizedBox(width: 10),
                           currentUser.value.id ==null ? Container() :  InkWell(
                             child: Text("Review",style: TextStyle(color: Colors.amber),),
                             onTap: () async {
-                              Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) =>
-                                      ReviewList(routeArgument:
-                                      RouteArgument(id: restaurant.id,
-                                          heroTag: "home"),),));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReviewList(routeArgument: RouteArgument(id: restaurant.id, heroTag: "home"))));
                             },
                           ),
                         ],
@@ -145,7 +140,7 @@ class CardWidget extends StatelessWidget {
                 ),
                 SizedBox(width: 15),
 
-                heroTag=='map_restaurants'? Container():Expanded(
+                heroTag=='map_restaurants'? Container() : Expanded(
                   child: Column(
                     children: <Widget>[
                       FlatButton(

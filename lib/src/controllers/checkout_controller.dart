@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_delivery_app/src/helpers/helper.dart';
+import 'package:food_delivery_app/src/models/stripe_getcard_model.dart';
 import 'package:food_delivery_app/src/repository/stripe_repository.dart';
-
 import '../../generated/l10n.dart';
 import '../models/cart.dart';
 import '../models/credit_card.dart';
@@ -18,6 +19,12 @@ class CheckoutController extends CartController {
   Payment payment;
   CreditCard creditCard = new CreditCard();
   bool loading = true;
+  List<CreditCard> creditCardList = List();
+  List<StripeGetCardModel> rememberAllCardShow = List();
+
+  bool isRemember = false;
+
+  CheckoutController _con;
 
   CheckoutController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -74,14 +81,13 @@ class CheckoutController extends CartController {
 
    customerGetApi() {
     getCustomerId().then((value) {
-      if (value != null && value.success != true) {
+      if (value != null && value.success == true) {
         print(value);
         // createCustomerApi(value.id);
-
+        print("cardId length ${value.data.length}");
         for(int i = 0; i < value.data.length; i++) {
           getCardData(value.data[i].cardId);
         }
-
         setState((){});
         // int restaurantId = value.id;
         // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
@@ -103,17 +109,121 @@ class CheckoutController extends CartController {
     //   "card[name]": imageBase64,
     // };
 
-    print(cardId);
+    print("cardId");
     getCardApi(cardId).then((value) {
       if (value != null) {
+        if(value.data.isNotEmpty) {
+          rememberAllCardShow.add(value);
+          print(rememberAllCardShow);
+          print(value.data.length);
+          setState((){});
+        }
+      } else {
+        print("Some thing wrong");
+      }
+    });
+  }
 
-        // print(value.message);
 
-        // uploadedImageId = value.data.url;
-        // uploadImageList.add(value.data.url);
+
+  //Stripe payment add card
+  stripAddPaymentApi (StripeGetCardModel rememberAllCardShow) {
+
+    // Map<String, dynamic> cardDataMap = {
+    //   "card[number]": creditCard.number,
+    //   "card[exp_month]": creditCard.expMonth,
+    //   "card[exp_year]": creditCard.expYear,
+    //   "card[cvc]": creditCard.cvc,
+    //   // "card[name]": creditCard,
+    // };
+
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
+    Map<String, dynamic> cardDataMap = {
+      "card[number]": rememberAllCardShow.data[0].cardAllNumber.toString(),
+      "card[exp_month]": rememberAllCardShow.data[0].expMonth.toString(),
+      "card[exp_year]": rememberAllCardShow.data[0].expYear.toString(),
+      "card[cvc]": rememberAllCardShow.data[0].cvcNumber.toString(),
+      // "card[name]": creditCard,
+    };
+
+    isRemember = rememberAllCardShow.data[0].isRemember;
+
+    print(cardDataMap);
+    postAddCardDetailsApi(cardDataMap).then((value) {
+
+      Future.delayed(const Duration(seconds: 4), () => Helper.hideLoader(loader));
+
+      if (value != null && value.id != null) {
+        print(value);
+        createCustomerApi(value.id);
         setState((){});
-        // int restaurantId = value.id;
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
+      } else {
+        print("Some thing wrong");
+      }
+    });
+  }
+
+  //create customer Id : -
+
+  createCustomerApi (String tokenAccess) {
+
+    Map<String, dynamic> customerMap = {
+      // "description": "any",
+      "source": tokenAccess,
+      // "email": "test@gmail.com",
+    };
+
+    print(customerMap);
+    postCustomerIdGet(customerMap).then((value) {
+      if (value != null && value.id != null) {
+        print(value);
+        stripePayApi(value.id, value.defaultSource, isRemember);
+        if(isRemember) {
+          addCustomerIdApi(value.id);
+        }
+        setState((){});
+      } else {
+        print("Some thing wrong");
+      }
+    });
+  }
+
+  //Stripe Payment Delete Card : -
+  deleteCardData (String customerId, String cardId) {
+    print(cardId);
+
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
+    deleteCardApi(customerId, cardId).then((value) {
+      Future.delayed(Duration(seconds: 7), () => Helper.hideLoader(loader));
+      if (value != null) {
+        // Fluttertoast.showToast(msg: "Card Delete Successfully");
+        deleteCustomerIdApi(cardId);
+        setState((){});
+      } else {
+        print("Some thing wrong");
+      }
+    });
+
+  }
+
+
+
+  //web api add customer/card id.
+  addCustomerIdApi(String customerId) {
+
+    OverlayEntry loader = Helper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
+    postCustomerId(customerId).then((value) {
+      Helper.hideLoader(loader);
+      if (value != null && value.success == true) {
+        print(value);
+        Fluttertoast.showToast(msg: value.message);
+        setState((){});
       } else {
         print("Some thing wrong");
       }
@@ -121,24 +231,17 @@ class CheckoutController extends CartController {
   }
 
   //delete web api card
-  deleteCustomerIdApi() {
-    deleteCustomerId().then((value) {
+  deleteCustomerIdApi(String cardId) {
+    deleteCustomerId(cardId).then((value) {
       if (value != null && value.success != true) {
         print(value);
-        Fluttertoast.showToast(
-          msg: value.message,
-          toastLength: Toast.LENGTH_SHORT,
-          webBgColor: "#e74c3c",
-          timeInSecForIosWeb: 5,
-        );
+        Fluttertoast.showToast(msg: value.message);
         setState((){});
       } else {
         print("Some thing wrong");
       }
     });
-
   }
-
   /*//Stripe payment add card
   stripAddPaymentApi () {
     // imageUploadApi (Uint8List uploadedImage, {File file}) {
@@ -196,13 +299,13 @@ class CheckoutController extends CartController {
   //stripe pay api
 
   //create customer Id : -
-  stripePayApi (String getToken) {
+  stripePayApi (String customerId, String cardId, bool isDelete) {
 
     Map<String, dynamic> customerMap = {
-      "amount": "10000",
-      "currency": "INR",
-      "customer": getToken,
-      "description": "Testing data",
+      "amount":((total * 100).toInt()).toString(),
+      "currency":"INR",
+      "customer":customerId,
+      "description":"Testing data",
       // "email": "test@gmail.com",
     };
 
@@ -210,17 +313,61 @@ class CheckoutController extends CartController {
     postStripeApi(customerMap).then((value) {
       if (value != null && value.id != null) {
         print(value);
-
-
-        // uploadedImageId = value.data.url;
-        // uploadImageList.add(value.data.url);
+        // _con.payment = new Payment("Cash on Delivery");
+        // _con.listenForCarts();
+        successAlertShow();
+        if(!isRemember && isDelete == true) {
+          deleteCardData(customerId, cardId);
+        }
         setState((){});
-        // int restaurantId = value.id;
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantRegThirdPage(restaurantId: restaurantId)));
       } else {
         print("Some thing wrong");
+        failAlertShow();
       }
     });
+  }
+
+
+  successAlertShow() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Successful!'),
+          content: Text('Your transactions successfully pay'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop(true);
+                Navigator.of(context).pushNamedAndRemoveUntil('/Pages', (Route<dynamic> route) => false, arguments: 2);
+                // /Pages// dismisses only the dialog and returns true
+              },
+              child: Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  failAlertShow() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Fail!'),
+          content: Text('Your transactions fail!'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop(true); // dismisses only the dialog and returns true
+              },
+              child: Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 }

@@ -126,9 +126,13 @@ class ReviewsController extends ControllerMVC {
           && (youtubeVimeoLink.text != null && youtubeVimeoLink.text.trim().isNotEmpty)) {
         sendMessageApi(restaurantReview.review, youtubeVimeoLink.text);
       } else if((restaurantReview.review != null && restaurantReview.review.trim().isNotEmpty) && (uploadImageListCheck != null && uploadImageListCheck.isNotEmpty)) {
-        uploadMediaLink(uploadImageListCheck[0], restaurantReview.review);
+        for(int i = 0; i < uploadImageList.length; i++) {
+          uploadMediaLink(uploadImageListCheck[i], restaurantReview.review);
+        }
       } else if(uploadImageListCheck != null && uploadImageListCheck.isNotEmpty) {
-        uploadMediaLink(uploadImageListCheck[0], null);
+        for(int i = 0; i < uploadImageList.length; i++) {
+          uploadMediaLink(uploadImageListCheck[0], null);
+        }
       } else if(youtubeVimeoLink.text != null && youtubeVimeoLink.text.trim().isNotEmpty) {
         sendMessageApi("", youtubeVimeoLink.text);
       } else if(restaurantReview.review != null && restaurantReview.review.trim().isNotEmpty) {
@@ -253,7 +257,9 @@ class ReviewsController extends ControllerMVC {
 
 
         if(uploadImageListCheck != null && uploadImageListCheck.isNotEmpty) {
-          uploadMediaLink(uploadImageListCheck[0], restaurantReview.review);
+          for(int i = 0; i < uploadImageList.length; i++) {
+            uploadMediaLink(uploadImageListCheck[i], restaurantReview.review);
+          }
         }
 
         return true;

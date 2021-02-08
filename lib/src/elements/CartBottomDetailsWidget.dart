@@ -28,8 +28,22 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
   bool isCharitySelected = false;
   String charity = "Select Charity";
 
+  List<String> charityList = ['Select Charity'];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("Data   123  ${widget.con.total}");
+  }
   @override
   Widget build(BuildContext context) {
+
+    if(widget.con.charityList!=null && widget.con.charityList.isNotEmpty && charityList.length==1){
+      widget.con.charityList.forEach((element) {
+        charityList.add(element.title);
+      });
+    }
 
     return widget.con.carts.isEmpty
         ? SizedBox(height: 0)
@@ -70,7 +84,8 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                               textAlign: TextAlign.start,
                               style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Theme.of(context).accentColor)),
                             ),
-                            items: <String>["Select Charity","Charity 1", "Charity 2", "Charity 3", "Charity 4"].map((String value) {
+                            items: charityList.map((String value) {
+                            // items: <String>["Select Charity","Charity 1", "Charity 2", "Charity 3", "Charity 4"].map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text("$value"),
@@ -82,7 +97,7 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                                   isCharitySelected = true;
                                   charity = val;
                                 });
-                              }else{
+                              } else {
                                 setState(() {
                                   isCharitySelected = false;
                                   charity = val;
@@ -197,9 +212,9 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                               width: MediaQuery.of(context).size.width - 40,
                               child: FlatButton(
                                 onPressed: () {
-                                  if(_data.contains(true)){
+                                  if(_data.contains(true)) {
                                     widget.con.goCheckout(context);
-                                  }else{
+                                  } else {
                                     if(charity != "Select Charity") {
                                       widget.con.scaffoldKey.currentState
                                           ?.showSnackBar(SnackBar(
@@ -207,7 +222,7 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                                             .of(context)
                                             .please_select_meal_for_charity),
                                       ));
-                                    }else{
+                                    } else {
                                       widget.con.goCheckout(context);
                                     }
                                   }
@@ -256,39 +271,48 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
             onChanged: (bool value) {
               setState(() {
                 _data[i] = value;
-                switch(i){
-                  case 0: if(value){
+                switch(i) {
+                  case 0: if(value) {
                               widget.con.subTotal +=10;
                               final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                               widget.con.subTotal +=tax;
-                              widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
-                              widget.con.total = widget.con.total.round().toDouble();
-                  }else{
+                              print(" +  ${widget.con.subTotal}");
+                              widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee;
+                              widget.con.total = widget.con.total.toDouble();
+                              // widget.con.total = widget.con.total.round().toDouble();
+                  } else {
                     widget.con.subTotal -=10;
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                     widget.con.subTotal -=tax;
+                    print(" - ${widget.con.subTotal}");
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
-                    widget.con.total = widget.con.total.round().toDouble();
+                    widget.con.total = widget.con.total.toDouble();
+                    // widget.con.total = widget.con.total.round().toDouble();
                   }
                     break;
-                  case 1: if(value){
+                  case 1: if(value) {
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                     widget.con.subTotal +=tax;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
-                  }else{
+                  } else {
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                     widget.con.subTotal -=tax;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
                   }
                   break;
-                  case 2: if(value){
+                  case 2: if(value) {
                     widget.con.subTotal +=10;
-                  }else{
+                    widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                  } else {
                     widget.con.subTotal -=10;
+                    widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
                   }
                   break;
-                  case 3:
+                  case 3: if(value) {
                     widget.con.total = widget.con.total.round().toDouble();
+                  } else {
+                    widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                  }
                   break;
                 }
               });

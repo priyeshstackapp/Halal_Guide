@@ -6,6 +6,7 @@ class CreditCard {
   String expMonth = '';
   String expYear = '';
   String cvc = '';
+  // bool isRemember = false;
 
   CreditCard();
 
@@ -40,3 +41,5 @@ class CreditCard {
     return number != null && number != '' && expMonth != null && expMonth != '' && expYear != null && expYear != '' && cvc != null && cvc != '';
   }
 }
+
+

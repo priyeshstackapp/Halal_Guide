@@ -9,7 +9,7 @@ import '../models/credit_card.dart';
 class CreditCardsWidget extends StatefulWidget {
   CreditCard creditCard;
   ValueChanged<CreditCard> onChanged;
-  List<CreditCard> creditCardList;
+  List creditCardList;
   CreditCardsWidget({
     this.creditCard,
     this.onChanged,
@@ -31,7 +31,7 @@ class _CreditCardsWidgetState extends State<CreditCardsWidget> {
       margin: EdgeInsets.only(bottom: 10),
       // height: MediaQuery.of(context).size.height / 2,
       child: ListView.builder (
-          itemCount: widget.creditCardList != null && widget.creditCardList.isNotEmpty  ? 2 : 0,
+          itemCount: widget.creditCardList != null && widget.creditCardList.isNotEmpty  ? widget.creditCardList.length : 0,
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {

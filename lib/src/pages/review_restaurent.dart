@@ -198,7 +198,7 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                               return index == _con.imagesList.length
                                   ? InkWell(
                                 onTap: () async {
-
+                                  FocusScope.of(context).unfocus();
                                   source(context);
 
                                   // await showDialogForImagePick(context, () async {
@@ -306,7 +306,9 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
               GestureDetector(
                 onTap: () async {
                   var _image = await ImagePicker.pickImage(
-                      source: ImageSource.camera);
+                      source: ImageSource.camera,
+                      imageQuality: 50,
+                  );
                   if (_image != null) {
                     image = _image;
                     _con.imagesList.add(_image);
@@ -342,13 +344,17 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
                 onTap: () async {
                   // loadAssets();
                   FocusScope.of(context).requestFocus(new FocusNode());
-                  File _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                  File _image = await ImagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
                   if (_image != null) {
+                 /*   print("Image size 1 ==> ${_image.path}");
+                    File fileData =  await testCompressAndGetFile(_image);
+                    print("Image size 1 ==> ${_image.path}");*/
                     image = _image;
                     _con.imagesList.add(_image);
                     // _con.imagesList.insert(1, _image);
                     setState(() {});
                     List<int> imageBytes = image.readAsBytesSync();
+
                     String base64Image = base64Encode(imageBytes);
                     print(base64Image);
                     _con.imageUploadApi(base64Image);
@@ -379,6 +385,21 @@ class _ReviewsWidgetState extends StateMVC<ReviewsRestaurantWidget> {
           );
         });
   }
+
+
+
+/*  Future<File> testCompressAndGetFile(File file) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, "/sdcard/download",
+      quality: 88,
+      rotate: 180,
+    );
+
+    print(file.lengthSync());
+    print(result.lengthSync());
+
+    return result;
+  }*/
 
   // Future<void> _selectImage() async {
   //   final completer = Completer<List<String>>();

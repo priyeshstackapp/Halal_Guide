@@ -1,6 +1,6 @@
 class StripeGetCardModel {
   String object;
-  List<Data> data;
+  List<CardData> data;
   bool hasMore;
   String url;
 
@@ -9,9 +9,9 @@ class StripeGetCardModel {
   StripeGetCardModel.fromJson(Map<String, dynamic> json) {
     object = json['object'];
     if (json['data'] != null) {
-      data = new List<Data>();
+      data = new List<CardData>();
       json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
+        data.add(new CardData.fromJson(v));
       });
     }
     hasMore = json['has_more'];
@@ -30,7 +30,7 @@ class StripeGetCardModel {
   }
 }
 
-class Data {
+class CardData {
   String id;
   String object;
   String addressCity;
@@ -51,11 +51,14 @@ class Data {
   String fingerprint;
   String funding;
   String last4;
+  String cardAllNumber = "";
+  String cvcNumber = "";
   Metadata metadata;
   String name;
   String tokenizationMethod;
+  bool isRemember = false;
 
-  Data(
+  CardData(
       {this.id,
         this.object,
         this.addressCity,
@@ -76,11 +79,13 @@ class Data {
         this.fingerprint,
         this.funding,
         this.last4,
+        this.cardAllNumber,
+        this.cvcNumber,
         this.metadata,
         this.name,
         this.tokenizationMethod});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CardData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     object = json['object'];
     addressCity = json['address_city'];

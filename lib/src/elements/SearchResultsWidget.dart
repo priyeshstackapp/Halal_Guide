@@ -93,11 +93,11 @@ class _SearchResultWidgetState extends StateMVC<SearchResultWidget> {
                           ),
                         ),
                       ),
-                      ListView.separated(
+                      _con?.foods?.length != 0 ?  ListView.separated(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         primary: false,
-                        itemCount: _con.foods.length,
+                        itemCount: _con?.foods?.length ?? 0,
                         separatorBuilder: (context, index) {
                           return SizedBox(height: 10);
                         },
@@ -107,7 +107,11 @@ class _SearchResultWidgetState extends StateMVC<SearchResultWidget> {
                             food: _con.foods.elementAt(index),
                           );
                         },
-                      ),
+                      ) : Center(
+                        child: Container(
+                          child: Text("Searching food not found"),
+                        ),
+                      ) ,
                       Padding(
                         padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                         child: ListTile(
@@ -119,10 +123,10 @@ class _SearchResultWidgetState extends StateMVC<SearchResultWidget> {
                           ),
                         ),
                       ),
-                      ListView.builder(
+                      _con?.restaurants?.length != 0?  ListView.builder(
                         shrinkWrap: true,
                         primary: false,
-                        itemCount: _con.restaurants.length,
+                        itemCount: _con?.restaurants?.length ?? 0,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
@@ -132,9 +136,13 @@ class _SearchResultWidgetState extends StateMVC<SearchResultWidget> {
                                     heroTag: widget.heroTag,
                                   ));
                             },
-                            child: CardWidget(restaurant: _con.restaurants.elementAt(index), heroTag: widget.heroTag),
+                            child: _con?.restaurants != null && _con?.restaurants[0]?.name != null ? CardWidget(restaurant: _con.restaurants.elementAt(index), heroTag: widget.heroTag) : Container(),
                           );
                         },
+                      ) : Center(
+                        child: Container(
+                          child: Text("Searching restaurants not found"),
+                        ),
                       ),
                     ],
                   ),

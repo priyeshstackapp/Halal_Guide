@@ -29,7 +29,7 @@ Future<Stream<Restaurant>> getNearRestaurants(Address myLocation, Address areaLo
   SharedPreferences prefs = await SharedPreferences.getInstance();
   Filter filter = Filter.fromJSON(json.decode(prefs.getString('filter') ?? '{}'));
 
-  _queryParams['limit'] = '6';
+  // _queryParams['limit'] = '100';
   if (!myLocation.isUnknown() && !areaLocation.isUnknown()) {
     _queryParams['myLon'] = myLocation.longitude.toString();
     _queryParams['myLat'] = myLocation.latitude.toString();
@@ -42,8 +42,10 @@ Future<Stream<Restaurant>> getNearRestaurants(Address myLocation, Address areaLo
   try {
     final client = new http.Client();
     final streamedRest = await client.send(http.Request('get', uri));
-
+    int i = 0;
     return streamedRest.stream.transform(utf8.decoder).transform(json.decoder).map((data) => Helper.getData(data)).expand((data) => (data as List)).map((data) {
+      i += 1;
+      // print("($i)name: ${data['name']}  lat ${data["latitude"]}  ==  >  long${data['longitude']} ");
       return Restaurant.fromJSON(data);
     });
   } catch (e) {
@@ -92,6 +94,32 @@ Future<Stream<Restaurant>> searchRestaurants(String search, Address address) asy
     _queryParams['areaLon'] = address.longitude.toString();
     _queryParams['areaLat'] = address.latitude.toString();
   }
+  uri = uri.replace(queryParameters: _queryParams);
+  print(uri);
+  try {
+    final client = new http.Client();
+    final streamedRest = await client.send(http.Request('get', uri));
+
+    return streamedRest.stream.transform(utf8.decoder).transform(json.decoder).map((data) => Helper.getData(data)).expand((data) => (data as List)).map((data) {
+      return Restaurant.fromJSON(data);
+    });
+  } catch (e) {
+    print(CustomTrace(StackTrace.current, message: uri.toString()).toString());
+    return new Stream.value(new Restaurant.fromJSON({}));
+  }
+}
+
+Future<Stream<Restaurant>> getCuisine(String search) async {
+  Uri uri = Helper.getUri('api/cuisine/restro');
+  Map<String, dynamic> _queryParams = {};
+  _queryParams['filter_cuisine'] = search;
+  // _queryParams['limit'] = '5';
+  /*if (!address.isUnknown()) {
+    _queryParams['myLon'] = address.longitude.toString();
+    _queryParams['myLat'] = address.latitude.toString();
+    _queryParams['areaLon'] = address.longitude.toString();
+    _queryParams['areaLat'] = address.latitude.toString();
+  }*/
   uri = uri.replace(queryParameters: _queryParams);
   print(uri);
   try {

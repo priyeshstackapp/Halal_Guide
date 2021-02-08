@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/controllers/cart_controller.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -24,10 +25,13 @@ class DeliveryPickupWidget extends StatefulWidget {
 }
 
 class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
+
   DeliveryPickupController _con;
+  CartController _con1;
 
   _DeliveryPickupWidgetState() : super(DeliveryPickupController()) {
     _con = controller;
+    _con1 = controller;
   }
 
   @override
@@ -39,7 +43,118 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
     }
     return Scaffold(
       key: _con.scaffoldKey,
-      bottomNavigationBar: CartBottomDetailsWidget(con: _con),
+      bottomNavigationBar: CartBottomDetailsWidget(con: _con1),
+
+    /*  bottomNavigationBar: Container(
+        height: 160,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+            boxShadow: [BoxShadow(color: Theme.of(context).focusColor.withOpacity(0.15), offset: Offset(0, -2), blurRadius: 5.0)]),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 40,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      S.of(context).subtotal,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  Helper.getPrice(widget.routeArgument.param['subTotal'], context, style: Theme.of(context).textTheme.subtitle1)
+                  // Helper.getPrice(widget.con.subTotal, context, style: Theme.of(context).textTheme.subtitle1)
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      S.of(context).delivery_fee,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  Helper.getPrice(widget.routeArgument.param['deliveryFee'], context, style: Theme.of(context).textTheme.subtitle1)
+
+                  //     if (Helper.canDelivery(widget.con.carts[0].food.restaurant, carts: widget.con.carts))
+                  //   Helper.getPrice(widget.con.carts[0].food.restaurant.deliveryFee, context, style: Theme.of(context).textTheme.subtitle1)
+                  // else
+                  //   Helper.getPrice(0, context, style: Theme.of(context).textTheme.subtitle1)
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      '${S.of(context).tax} (10%)',
+                      // '${S.of(context).tax} (${widget.con.carts[0].food.restaurant.defaultTax}%)',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  Helper.getPrice(widget.routeArgument.param['taxAmount'], context, style: Theme.of(context).textTheme.subtitle1)
+                  // Helper.getPrice(widget.con.taxAmount, context, style: Theme.of(context).textTheme.subtitle1)
+                ],
+              ),
+              SizedBox(height: 10),
+              Stack(
+                fit: StackFit.loose,
+                alignment: AlignmentDirectional.centerEnd,
+                children: <Widget>[
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 40,
+                    child: FlatButton(
+                      onPressed: () {
+
+                        // Navigator.of(context).pushNamed('/Settings', arguments: RouteArgument(param: widget.routeArgument.param));
+
+                         *//* if(_data.contains(true)) {
+                          widget.con.goCheckout(context);
+                        } else {
+                          if(charity != "Select Charity") {
+                            widget.con.scaffoldKey.currentState
+                                ?.showSnackBar(SnackBar(
+                              content: Text(S
+                                  .of(context)
+                                  .please_select_meal_for_charity),
+                            ));
+                          } else {
+                            widget.con.goCheckout(context);
+                          }
+                        }*//*
+
+                      },
+                      disabledColor: Theme.of(context).focusColor.withOpacity(0.5),
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      color: Theme.of(context).accentColor,
+                      // color: !widget.con.carts[0].food.restaurant.closed ? Theme.of(context).accentColor : Theme.of(context).focusColor.withOpacity(0.5),
+                      shape: StadiumBorder(),
+                      child: Text(
+                        S.of(context).checkout,
+                        textAlign: TextAlign.start,
+                        style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Theme.of(context).primaryColor)),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Helper.getPrice(
+                      widget.routeArgument.param['total'],
+                      context,
+                      style: Theme.of(context).textTheme.headline4.merge(TextStyle(color: Theme.of(context).primaryColor)),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),*/
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

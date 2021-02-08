@@ -61,7 +61,7 @@ class FoodItemWidget extends StatelessWidget {
               ),
             ),
             SizedBox(width: 15),
-            Flexible(
+            food != null && food.name != null ? Flexible(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -70,7 +70,7 @@ class FoodItemWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          food.name,
+                          food?.name ?? "",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: Theme.of(context).textTheme.subtitle1,
@@ -108,7 +108,7 @@ class FoodItemWidget extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ) : Container()
           ],
         ),
       ),

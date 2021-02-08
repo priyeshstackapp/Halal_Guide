@@ -28,6 +28,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
   @override
   void initState() {
     _con.listenForCarts();
+    _con.listenForCharity();
+
     super.initState();
   }
 

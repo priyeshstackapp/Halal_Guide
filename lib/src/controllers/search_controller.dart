@@ -24,7 +24,26 @@ class SearchController extends ControllerMVC {
     Address _address = deliveryAddress.value;
     final Stream<Restaurant> stream = await searchRestaurants(search, _address);
     stream.listen((Restaurant _restaurant) {
+      print(_restaurant.name);
       setState(() => restaurants.add(_restaurant));
+    }, onError: (a) {
+      print(a);
+    }, onDone: () {});
+  }
+
+
+  void listenForCuisine({String search}) async {
+    // if (search == null) {
+    //   search = await getRecentSearch();
+    // }
+    Address _address = deliveryAddress.value;
+    final Stream<Restaurant> stream = await getCuisine(search);
+    stream.listen((Restaurant _restaurant) {
+
+      if(!restaurants.contains(_restaurant.name)) {
+        print(_restaurant.name);
+        setState(() => restaurants.add(_restaurant));
+      }
     }, onError: (a) {
       print(a);
     }, onDone: () {});
@@ -50,6 +69,8 @@ class SearchController extends ControllerMVC {
     });
     listenForRestaurants(search: search);
     listenForFoods(search: search);
+    listenForCuisine(search: search);
+
   }
 
   void saveSearch(String search) {

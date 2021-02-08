@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/models/charity.dart';
+import 'package:food_delivery_app/src/models/route_argument.dart';
+import 'package:food_delivery_app/src/pages/delivery_pickup.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -15,6 +18,7 @@ class CartController extends ControllerMVC {
   double subTotal = 0.0;
   double total = 0.0;
   GlobalKey<ScaffoldState> scaffoldKey;
+  List<Charity> charityList;
 
   CartController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -43,7 +47,13 @@ class CartController extends ControllerMVC {
         ));
       }
       onLoadingCartDone();
+      // if (payment != null) addOrder(carts);
     });
+  }
+
+  void listenForCharity() async {
+    charityList = await getCharity();
+    notifyListeners();
   }
 
   void onLoadingCartDone() {}
@@ -134,7 +144,16 @@ class CartController extends ControllerMVC {
           content: Text(S.of(context).this_restaurant_is_closed_),
         ));
       } else {
-        Navigator.of(context).pushNamed('/DeliveryPickup');
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryPickupWidget()));
+
+        Map<String, dynamic> mapData = {
+            "subTotal":subTotal,
+            "taxAmount":taxAmount,
+            "deliveryFee":deliveryFee,
+            "total":total,
+        };
+
+        Navigator.of(context).pushNamed('/DeliveryPickup', arguments: RouteArgument(param: mapData));
       }
     }
   }

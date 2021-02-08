@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:food_delivery_app/src/models/charity.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,6 +26,24 @@ Future<Stream<Cart>> getCart() async {
   return streamedRest.stream.transform(utf8.decoder).transform(json.decoder).map((data) => Helper.getData(data)).expand((data) => (data as List)).map((data) {
     return Cart.fromJSON(data);
   });
+}
+
+Future<List<Charity>> getCharity() async {
+  User _user = userRepo.currentUser.value;
+  if (_user.apiToken == null) {
+    return List();
+  }
+
+  final String _apiToken = 'api_token=${_user.apiToken}';
+  final String url = '${GlobalConfiguration().getString('api_base_url')}charity?$_apiToken';
+
+  print(url);
+  final response = await http.get(url);
+  if(response.statusCode==200){
+    return charityFromJson(response.body);
+  }else{
+    return List();
+  }
 }
 
 Future<Stream<int>> getCartCount() async {
