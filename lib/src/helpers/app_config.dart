@@ -35,16 +35,18 @@ class App {
     return _widthPadding * v;
   }
 
+  static Map<String, dynamic> cardMapData = {};
+
 
   //Stripe payment key
   static String publicKey() {
-    return "Bearer pk_test_51GtFPIGadoDyDn9h84SFcu3EvDvuVOSV24cEO2GR2gaTufZOid8T6M4MrsilsXZaNnZayc9RuyD8RpVOJfqRz1ng00HMGiRGIb";
-    // return "Bearer pk_test_51I2Va0FWDFJAlIu6aS3Wb0r1q1LAEeRYHi86B3YH0dBG685AeMBegonROIn4pkegMH1j7XbX9QXQ2Vdvea64k41Y006FSV7Jsx";
+    // return "Bearer pk_test_51GtFPIGadoDyDn9h84SFcu3EvDvuVOSV24cEO2GR2gaTufZOid8T6M4MrsilsXZaNnZayc9RuyD8RpVOJfqRz1ng00HMGiRGIb";
+    return "Bearer pk_test_51I2Va0FWDFJAlIu6aS3Wb0r1q1LAEeRYHi86B3YH0dBG685AeMBegonROIn4pkegMH1j7XbX9QXQ2Vdvea64k41Y006FSV7Jsx";
   }
 
   static String secretKey() {
-    return "Bearer sk_test_51GtFPIGadoDyDn9hosyt1CFS8bqqblI3VhPXlrL9odQ2EqSrddzOpkfAikuODq7pV8DiT5wki1MDzMaFozqcNS3k00nIoMjPSg";
-    // return "Bearer sk_test_51I2Va0FWDFJAlIu6oHYtovX6vG1GlrfCIA0gLvgmtgBgBCJi1duoZmcO5oXIrJTUlP8mfc6BhXdfFtTpEvCrASaH001Wi6qEts";
+    // return "Bearer sk_test_51GtFPIGadoDyDn9hosyt1CFS8bqqblI3VhPXlrL9odQ2EqSrddzOpkfAikuODq7pV8DiT5wki1MDzMaFozqcNS3k00nIoMjPSg";
+    return "Bearer sk_test_51I2Va0FWDFJAlIu6oHYtovX6vG1GlrfCIA0gLvgmtgBgBCJi1duoZmcO5oXIrJTUlP8mfc6BhXdfFtTpEvCrASaH001Wi6qEts";
   }
 
   //facebook post key : -

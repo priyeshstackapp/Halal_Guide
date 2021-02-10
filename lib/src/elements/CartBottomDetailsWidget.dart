@@ -96,6 +96,12 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                                 setState(() {
                                   isCharitySelected = true;
                                   charity = val;
+                                  for(int i = 0; i < widget.con.charityList.length; i++) {
+                                    if(widget.con.charityList[i].title == val) {
+                                      widget.con.selectedCharityId = widget.con.charityList[i].id.toString();
+                                      print("selected id  ${widget.con.selectedCharityId}");
+                                    }
+                                  }
                                 });
                               } else {
                                 setState(() {
@@ -212,6 +218,7 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                               width: MediaQuery.of(context).size.width - 40,
                               child: FlatButton(
                                 onPressed: () {
+
                                   if(_data.contains(true)) {
                                     widget.con.goCheckout(context);
                                   } else {
@@ -280,6 +287,7 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                               widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee;
                               widget.con.total = widget.con.total.toDouble();
                               // widget.con.total = widget.con.total.round().toDouble();
+                              widget.con.withOutCharityTotal += 10;
                   } else {
                     widget.con.subTotal -=10;
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
@@ -288,24 +296,31 @@ class CartBottomDetailsWidgetState extends State<CartBottomDetailsWidget> {
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
                     widget.con.total = widget.con.total.toDouble();
                     // widget.con.total = widget.con.total.round().toDouble();
+                    widget.con.withOutCharityTotal -= 10;
                   }
                     break;
                   case 1: if(value) {
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                     widget.con.subTotal +=tax;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                    widget.con.withOutCharityTotal += tax;
+
                   } else {
                     final tax = (10 + widget.con.deliveryFee) * widget.con.carts[0].food.restaurant.defaultTax / 100;
                     widget.con.subTotal -=tax;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                    widget.con.withOutCharityTotal -= tax;
                   }
                   break;
                   case 2: if(value) {
                     widget.con.subTotal +=10;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                    widget.con.withOutCharityTotal += 10;
+
                   } else {
                     widget.con.subTotal -=10;
                     widget.con.total = widget.con.subTotal + widget.con.taxAmount + widget.con.deliveryFee ;
+                    widget.con.withOutCharityTotal -= 10;
                   }
                   break;
                   case 3: if(value) {

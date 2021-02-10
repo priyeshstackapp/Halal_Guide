@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_delivery_app/src/elements/PaymentSettingsDialog.dart';
+import 'package:food_delivery_app/src/helpers/app_config.dart' as appCon;
 import 'package:food_delivery_app/src/models/credit_card.dart';
 import 'package:food_delivery_app/src/models/stripe_getcard_model.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
@@ -173,7 +174,11 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                              Helper.getPrice(_con.subTotal, context, style: Theme.of(context).textTheme.subtitle1)
+                              Text(
+                                "\$ ${appCon.App?.cardMapData['subTotal'] ?? "-"}",
+                                style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(fontSize: 18)),
+                              ),
+                              // Helper.getPrice(_con.subTotal, context, style: Theme.of(context).textTheme.subtitle1)
                             ],
                           ),
                           SizedBox(height: 3),
@@ -181,11 +186,16 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                             children: <Widget>[
                               Expanded(
                                 child: Text(
+                                  // appCon.App.cardMapData['subTotal'].toString(),
                                   S.of(context).delivery_fee,
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                              Helper.getPrice(_con.carts[0].food.restaurant.deliveryFee, context, style: Theme.of(context).textTheme.subtitle1)
+                              Text(
+                                "\$ ${appCon.App?.cardMapData['deliveryFee'] ?? "-"}",
+                                style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(fontSize: 18)),
+                              ),
+                              // Helper.getPrice(_con.carts[0].food.restaurant.deliveryFee, context, style: Theme.of(context).textTheme.subtitle1)
                             ],
                           ),
                           SizedBox(height: 3),
@@ -197,7 +207,11 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                              Helper.getPrice(_con.taxAmount, context, style: Theme.of(context).textTheme.subtitle1)
+                              Text(
+                                "\$ ${appCon.App?.cardMapData['taxAmount'] ?? "-"}",
+                                style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(fontSize: 18)),
+                              ),
+                              // Helper.getPrice(_con.taxAmount, context, style: Theme.of(context).textTheme.subtitle1)
                             ],
                           ),
                           Divider(height: 30),
@@ -205,11 +219,16 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                             children: <Widget>[
                               Expanded(
                                 child: Text(
+                                  // appCon.App.cardMapData['total'].toString(),
                                   S.of(context).total,
                                   style: Theme.of(context).textTheme.headline6,
                                 ),
                               ),
-                              Helper.getPrice(_con.total, context, style: Theme.of(context).textTheme.headline6)
+                              Text(
+                                "\$ ${appCon.App?.cardMapData['total'] ?? "-"}",
+                                style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(fontSize: 18, color: Theme.of(context).accentColor)),
+                              ),
+                              // Helper.getPrice(_con.total, context, style: Theme.of(context).textTheme.headline6)
                             ],
                           ),
                           SizedBox(height: 20),

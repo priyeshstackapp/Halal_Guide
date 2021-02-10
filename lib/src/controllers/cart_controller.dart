@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/src/helpers/app_config.dart';
 import 'package:food_delivery_app/src/models/charity.dart';
+import 'package:food_delivery_app/src/models/charity_custome_cart.dart';
 import 'package:food_delivery_app/src/models/route_argument.dart';
 import 'package:food_delivery_app/src/pages/delivery_pickup.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
-
+import '../repository/user_repository.dart' as userRepo;
 import '../../generated/l10n.dart';
 import '../helpers/helper.dart';
 import '../models/cart.dart';
@@ -17,8 +21,11 @@ class CartController extends ControllerMVC {
   int cartCount = 0;
   double subTotal = 0.0;
   double total = 0.0;
+  double withOutCharityTotal = 0.0;
   GlobalKey<ScaffoldState> scaffoldKey;
   List<Charity> charityList;
+  String selectedCharityId = "";
+
 
   CartController() {
     this.scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -107,6 +114,7 @@ class CartController extends ControllerMVC {
     }
     taxAmount = (subTotal + deliveryFee) * carts[0].food.restaurant.defaultTax / 100;
     total = subTotal + taxAmount + deliveryFee;
+    // withOutCharityTotal = total;
     setState(() {});
   }
 
@@ -146,15 +154,56 @@ class CartController extends ControllerMVC {
       } else {
         // Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryPickupWidget()));
 
+        charityCartCustomApi();
+
         Map<String, dynamic> mapData = {
             "subTotal":subTotal,
             "taxAmount":taxAmount,
             "deliveryFee":deliveryFee,
             "total":total,
         };
-
+        App.cardMapData = mapData;
+        setState(() {});
         Navigator.of(context).pushNamed('/DeliveryPickup', arguments: RouteArgument(param: mapData));
+
       }
     }
   }
+
+
+  //charity cart-custom api
+
+  charityCartCustomApi() {
+
+    // withOutCharityTotal = total - withOutCharityTotal;
+
+    print("withOutCharityTotal ${withOutCharityTotal}");
+
+    Map<String, dynamic> charityMap = {
+      "amount": withOutCharityTotal.toString(),
+      "name": userRepo.currentUser.value.name,
+      "charity_id": selectedCharityId
+    };
+
+    cartCustom(charityMap).then((value) {
+      Map<String, dynamic> mapData = json.decode(value.body);
+      if(value != null) {
+        if(value.statusCode == 200 || value.statusCode == 201) {
+          if(mapData['success'] == true) {
+            CharityCustomCartModel charityCustomCartModel = CharityCustomCartModel.fromJson(json.decode(value.body));
+            print(charityCustomCartModel.message);
+          } else {
+            print("html response");
+          }
+        } else {
+          print("Some thing wrong");
+        }
+      } else {
+        print("some error");
+      }
+    });
+
+  }
+
+
 }

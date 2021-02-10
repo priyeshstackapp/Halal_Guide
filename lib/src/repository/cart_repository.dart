@@ -120,3 +120,37 @@ Future<bool> removeCart(Cart cart) async {
   );
   return Helper.getBoolData(json.decode(response.body));
 }
+
+
+Future<http.Response> cartCustom(Map<String, dynamic> charityMap) async {
+
+  User _user = userRepo.currentUser.value;
+ /* if (_user.apiToken == null) {
+    return new Cart();
+  }*/
+
+  Map<String, dynamic> decodedJSON = {};
+  final String _apiToken = 'api_token=${_user.apiToken}';
+  final String _with = 'with=food;food.restaurant;extras';
+  final String _search = 'search=${_user.id}';
+
+  final String url = '${GlobalConfiguration().getString('api_base_url')}cart-custom?$_apiToken&$_with&$_search';
+  print(url);
+
+  final client = new http.Client();
+  final response = await client.post(
+    url,
+    headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+    body: json.encode(charityMap),
+  );
+  try {
+    // decodedJSON = json.decode(response.body)['data'] as Map<String, dynamic>;
+
+    return response;
+
+  } on FormatException catch (e) {
+    return null;
+    print(CustomTrace(StackTrace.current, message: e.toString()));
+  }
+  // return Cart.fromJSON(decodedJSON);
+}

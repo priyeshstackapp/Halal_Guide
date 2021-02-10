@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/controllers/cart_controller.dart';
+import 'package:food_delivery_app/src/helpers/app_config.dart' as appCon;
+import 'package:food_delivery_app/src/pages/payment_methods.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/l10n.dart';
@@ -43,9 +45,9 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
     }
     return Scaffold(
       key: _con.scaffoldKey,
-      bottomNavigationBar: CartBottomDetailsWidget(con: _con1),
+      // bottomNavigationBar: CartBottomDetailsWidget(con: _con),
 
-    /*  bottomNavigationBar: Container(
+      bottomNavigationBar: Container(
         height: 160,
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         decoration: BoxDecoration(
@@ -66,7 +68,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  Helper.getPrice(widget.routeArgument.param['subTotal'], context, style: Theme.of(context).textTheme.subtitle1)
+                  Helper.getPrice(appCon.App.cardMapData['subTotal'], context, style: Theme.of(context).textTheme.subtitle1)
                   // Helper.getPrice(widget.con.subTotal, context, style: Theme.of(context).textTheme.subtitle1)
                 ],
               ),
@@ -79,7 +81,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  Helper.getPrice(widget.routeArgument.param['deliveryFee'], context, style: Theme.of(context).textTheme.subtitle1)
+                  Helper.getPrice(appCon.App.cardMapData['deliveryFee'], context, style: Theme.of(context).textTheme.subtitle1)
 
                   //     if (Helper.canDelivery(widget.con.carts[0].food.restaurant, carts: widget.con.carts))
                   //   Helper.getPrice(widget.con.carts[0].food.restaurant.deliveryFee, context, style: Theme.of(context).textTheme.subtitle1)
@@ -96,7 +98,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  Helper.getPrice(widget.routeArgument.param['taxAmount'], context, style: Theme.of(context).textTheme.subtitle1)
+                  Helper.getPrice(appCon.App.cardMapData['taxAmount'], context, style: Theme.of(context).textTheme.subtitle1)
                   // Helper.getPrice(widget.con.taxAmount, context, style: Theme.of(context).textTheme.subtitle1)
                 ],
               ),
@@ -110,9 +112,13 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                     child: FlatButton(
                       onPressed: () {
 
+                        _con.goCheckout(context);
+
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentMethodsWidget()));
+
                         // Navigator.of(context).pushNamed('/Settings', arguments: RouteArgument(param: widget.routeArgument.param));
 
-                         *//* if(_data.contains(true)) {
+                        /*  if(_data.contains(true)) {
                           widget.con.goCheckout(context);
                         } else {
                           if(charity != "Select Charity") {
@@ -125,7 +131,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                           } else {
                             widget.con.goCheckout(context);
                           }
-                        }*//*
+                        }*/
 
                       },
                       disabledColor: Theme.of(context).focusColor.withOpacity(0.5),
@@ -143,7 +149,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Helper.getPrice(
-                      widget.routeArgument.param['total'],
+                      appCon.App.cardMapData['total'],
                       context,
                       style: Theme.of(context).textTheme.headline4.merge(TextStyle(color: Theme.of(context).primaryColor)),
                     ),
@@ -153,7 +159,7 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
             ],
           ),
         ),
-      ),*/
+      ),
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -163,9 +169,9 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
           S.of(context).delivery_or_pickup,
           style: Theme.of(context).textTheme.headline6.merge(TextStyle(letterSpacing: 1.3)),
         ),
-        actions: <Widget>[
+       /* actions: <Widget>[
           new ShoppingCartButtonWidget(iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
-        ],
+        ],*/
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 10),

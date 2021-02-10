@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:food_delivery_app/src/helpers/app_config.dart';
 import 'package:food_delivery_app/src/helpers/helper.dart';
 import 'package:food_delivery_app/src/models/stripe_getcard_model.dart';
 import 'package:food_delivery_app/src/repository/stripe_repository.dart';
@@ -301,8 +302,11 @@ class CheckoutController extends CartController {
   //create customer Id : -
   stripePayApi (String customerId, String cardId, bool isDelete) {
 
+    double totalPrice = App?.cardMapData['total'];
+
     Map<String, dynamic> customerMap = {
-      "amount":((total * 100).toInt()).toString(),
+      //total
+      "amount":((totalPrice * 100).toInt()).toString(),
       "currency":"INR",
       "customer":customerId,
       "description":"Testing data",
